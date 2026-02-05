@@ -1,4 +1,7 @@
-/* Surakshita - Minimal Professional Design */
+/* Surakshita - Modern Slate Minimal Design */
+
+/* Import minimal, professional font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
 /* Smooth Global Transitions - GPU Accelerated */
 * {
@@ -23,31 +26,50 @@ main {
     animation: fadeInUp 0.6s ease-out forwards;
 }
 
-/* Minimal Theme Variables - Clean Slate & Indigo Palette */
+/* Modern Slate Theme Variables */
 :root {
     /* Background Colors */
-    --bg-primary: #F8FAFC;        /* Slate 50 */
-    --bg-card: #FFFFFF;            /* Pure White */
+    --bg-main: #f8fafc;            /* Soft Slate Gray */
+    --card-bg: #ffffff;            /* Pure White */
     --bg-secondary: #F1F5F9;       /* Slate 100 */
     
     /* Text Colors */
-    --text-primary: #0F172A;       /* Slate 900 */
-    --text-secondary: #64748B;     /* Slate 500 */
-    --text-muted: #94A3B8;         /* Slate 400 */
+    --text-main: #0f172a;          /* Deep Slate */
+    --text-muted: #64748b;         /* Muted Gray */
+    --text-secondary: #94A3B8;     /* Slate 400 */
     
     /* Border & Divider Colors */
-    --border-light: #E2E8F0;       /* Slate 200 */
+    --border: #e2e8f0;             /* Slate 200 */
     --border-medium: #CBD5E1;      /* Slate 300 */
     
     /* Accent Colors */
-    --accent-primary: #6366F1;     /* Indigo 500 */
-    --accent-primary-hover: #4F46E5; /* Indigo 600 */
+    --accent: #4f46e5;             /* Professional Indigo */
+    --accent-primary-hover: #4338ca; /* Indigo 700 */
     --accent-success: #10B981;     /* Emerald 500 */
     --accent-warning: #F59E0B;     /* Amber 500 */
     --accent-danger: #EF4444;      /* Red 500 */
-    
-    /* Subtle Tints (1% vertical gradients) */
-    --gradient-subtle: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
+}
+
+/* Global Typography - Inter Font */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    letter-spacing: -0.01em;
+}
+
+/* Clean Card Styles - Remove AI Gradients */
+.card, .stat-card, .dark-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover, .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* Custom Marker Cluster Styles - Minimal Design */
@@ -57,7 +79,7 @@ main {
 }
 
 .marker-cluster-small div {
-    background-color: var(--accent-primary);
+    background-color: var(--accent);
     color: white;
     font-weight: 600;
     display: flex;
@@ -70,12 +92,12 @@ main {
 }
 
 .marker-cluster-medium {
-    background-color: rgba(99, 102, 241, 0.15);
-    border: 2px solid rgba(99, 102, 241, 0.35);
+    background-color: rgba(79, 70, 229, 0.15);
+    border: 2px solid rgba(79, 70, 229, 0.35);
 }
 
 .marker-cluster-medium div {
-    background-color: #6366F1;
+    background-color: var(--accent);
     color: white;
     font-weight: 600;
     display: flex;
@@ -93,7 +115,7 @@ main {
 }
 
 .marker-cluster-large div {
-    background-color: #64748B;
+    background-color: var(--text-muted);
     color: white;
     font-weight: 600;
     display: flex;
@@ -178,20 +200,20 @@ main {
     }
 }
 
-/* Refined SOS Pulse with Ripple Effect */
-@keyframes sos-ripple {
-    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-    70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-}
-
+/* Minimal SOS Button - Utility Design */
 .sos-button {
-    animation: sos-ripple 2s infinite;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    background: #ef4444; /* Solid Red */
+    border-radius: 50px;
+    padding: 12px 24px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    animation: none; /* Removed heavy AI pulse for minimal aesthetic */
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease !important;
 }
 
 .sos-button:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
 }
 
 /* Minimal Pulse Animation for Critical Incidents */

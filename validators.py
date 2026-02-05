@@ -4,7 +4,7 @@ from typing import Tuple, Optional
 
 def validate_coordinates(latitude: float, longitude: float) -> Tuple[bool, Optional[str]]:
     """
-    Validate GPS coordinates
+    Validate GPS coordinates - Restricted to India only
     
     Args:
         latitude: Latitude value
@@ -17,11 +17,9 @@ def validate_coordinates(latitude: float, longitude: float) -> Tuple[bool, Optio
         lat = float(latitude)
         lon = float(longitude)
         
-        if not (-90 <= lat <= 90):
-            return False, "Latitude must be between -90 and 90"
-        
-        if not (-180 <= lon <= 180):
-            return False, "Longitude must be between -180 and 180"
+        # Strict bounding box for India geographic limits
+        if not (6.0 <= lat <= 38.0) or not (68.0 <= lon <= 98.0):
+            return False, "Services are currently only available within India."
         
         return True, None
     

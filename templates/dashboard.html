@@ -342,14 +342,22 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <script>
-// Initialize Map
-let map = L.map('map').setView([28.6139, 77.2090], 5); // Default to India center
+// Set bounds to strictly cover India
+const indiaBounds = L.latLngBounds(
+    [6.4626999, 68.1097], // Southwest
+    [35.513327, 97.395358] // Northeast
+);
 
-// Add light theme tile layer
+let map = L.map('map', {
+    maxBounds: indiaBounds,
+    maxBoundsViscosity: 1.0
+}).setView([20.5937, 78.9629], 5); // Center of India
+
+// Use a minimal Light Tile Layer for cleaner aesthetic
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    attribution: '©OpenStreetMap ©CARTO',
     subdomains: 'abcd',
-    maxZoom: 20
+    maxZoom: 18
 }).addTo(map);
 
 // Fetch incident data and render on map
