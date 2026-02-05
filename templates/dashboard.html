@@ -345,8 +345,8 @@
 // Initialize Map
 let map = L.map('map').setView([28.6139, 77.2090], 5); // Default to India center
 
-// Add dark theme tile layer
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+// Add light theme tile layer
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     subdomains: 'abcd',
     maxZoom: 20
@@ -402,11 +402,11 @@ fetch('/api/incidents')
             
             // Create popup content
             const popupContent = `
-                <div style="color: #e2e8f0;">
-                    <h3 style="font-weight: bold; margin-bottom: 8px; color: #fff;">${incident.incident_type}</h3>
+                <div style="color: #0F172A;">
+                    <h3 style="font-weight: bold; margin-bottom: 8px; color: #0F172A;">${incident.incident_type}</h3>
                     <p style="margin-bottom: 4px; font-size: 13px;">${incident.description.substring(0, 100)}${incident.description.length > 100 ? '...' : ''}</p>
-                    <p style="margin-top: 8px; font-size: 12px; color: #94a3b8;">
-                        <strong>Status:</strong> <span style="color: ${incident.status === 'Pending' ? '#fbbf24' : '#4ade80'};">${incident.status}</span><br>
+                    <p style="margin-top: 8px; font-size: 12px; color: #64748B;">
+                        <strong>Status:</strong> <span style="color: ${incident.status === 'Pending' ? '#F59E0B' : '#10B981'};">${incident.status}</span><br>
                         <strong>Date:</strong> ${new Date(incident.created_at).toLocaleDateString()}
                     </p>
                 </div>
@@ -426,9 +426,9 @@ fetch('/api/incidents')
                 maxZoom: 17,
                 max: 1.0,
                 gradient: {
-                    0.0: '#3b82f6',
-                    0.5: '#f59e0b',
-                    1.0: '#ef4444'
+                    0.0: '#A5B4FC',
+                    0.5: '#6366F1',
+                    1.0: '#4F46E5'
                 }
             }).addTo(map);
         }
@@ -442,8 +442,8 @@ fetch('/api/incidents')
     .catch(error => console.error('Error loading incident data:', error));
 
 // Chart.js Configuration
-Chart.defaults.color = '#9ca3af';
-Chart.defaults.borderColor = '#374151';
+Chart.defaults.color = '#64748B';
+Chart.defaults.borderColor = '#E2E8F0';
 
 // Bar Chart - Incidents by Category
 const categoryData = {{ incidents_by_category | tojson }};
@@ -459,24 +459,24 @@ new Chart(categoryCtx, {
             label: 'Number of Incidents',
             data: categoryCounts.length > 0 ? categoryCounts : [0],
             backgroundColor: [
-                'rgba(139, 92, 246, 0.7)',
-                'rgba(59, 130, 246, 0.7)',
-                'rgba(16, 185, 129, 0.7)',
-                'rgba(245, 158, 11, 0.7)',
-                'rgba(239, 68, 68, 0.7)',
-                'rgba(236, 72, 153, 0.7)',
-                'rgba(14, 165, 233, 0.7)'
+                'rgba(99, 102, 241, 0.8)',
+                'rgba(99, 102, 241, 0.7)',
+                'rgba(99, 102, 241, 0.6)',
+                'rgba(99, 102, 241, 0.5)',
+                'rgba(99, 102, 241, 0.4)',
+                'rgba(99, 102, 241, 0.3)',
+                'rgba(99, 102, 241, 0.2)'
             ],
             borderColor: [
-                'rgba(139, 92, 246, 1)',
-                'rgba(59, 130, 246, 1)',
-                'rgba(16, 185, 129, 1)',
-                'rgba(245, 158, 11, 1)',
-                'rgba(239, 68, 68, 1)',
-                'rgba(236, 72, 153, 1)',
-                'rgba(14, 165, 233, 1)'
+                'rgba(99, 102, 241, 1)',
+                'rgba(99, 102, 241, 1)',
+                'rgba(99, 102, 241, 1)',
+                'rgba(99, 102, 241, 1)',
+                'rgba(99, 102, 241, 1)',
+                'rgba(99, 102, 241, 1)',
+                'rgba(99, 102, 241, 1)'
             ],
-            borderWidth: 2
+            borderWidth: 1
         }]
     },
     options: {
@@ -494,7 +494,7 @@ new Chart(categoryCtx, {
                     stepSize: 1
                 },
                 grid: {
-                    color: '#374151'
+                    color: '#E2E8F0'
                 }
             },
             x: {
@@ -522,16 +522,16 @@ new Chart(timelineCtx, {
         datasets: [{
             label: 'Incidents Reported',
             data: timelineCounts.length > 0 ? timelineCounts : [0],
-            borderColor: 'rgba(139, 92, 246, 1)',
-            backgroundColor: 'rgba(139, 92, 246, 0.1)',
-            borderWidth: 3,
+            borderColor: 'rgba(99, 102, 241, 1)',
+            backgroundColor: 'rgba(99, 102, 241, 0.05)',
+            borderWidth: 2,
             fill: true,
             tension: 0.4,
-            pointBackgroundColor: 'rgba(139, 92, 246, 1)',
+            pointBackgroundColor: 'rgba(99, 102, 241, 1)',
             pointBorderColor: '#fff',
             pointBorderWidth: 2,
-            pointRadius: 5,
-            pointHoverRadius: 7
+            pointRadius: 4,
+            pointHoverRadius: 6
         }]
     },
     options: {
@@ -549,7 +549,7 @@ new Chart(timelineCtx, {
                     stepSize: 1
                 },
                 grid: {
-                    color: '#374151'
+                    color: '#E2E8F0'
                 }
             },
             x: {

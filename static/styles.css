@@ -47,12 +47,12 @@
 }
 
 .marker-cluster-medium {
-    background-color: rgba(245, 158, 11, 0.2);
-    border: 2px solid rgba(245, 158, 11, 0.4);
+    background-color: rgba(99, 102, 241, 0.15);
+    border: 2px solid rgba(99, 102, 241, 0.35);
 }
 
 .marker-cluster-medium div {
-    background-color: var(--accent-warning);
+    background-color: #6366F1;
     color: white;
     font-weight: 600;
     display: flex;
@@ -65,12 +65,12 @@
 }
 
 .marker-cluster-large {
-    background-color: rgba(239, 68, 68, 0.2);
-    border: 2px solid rgba(239, 68, 68, 0.4);
+    background-color: rgba(100, 116, 139, 0.2);
+    border: 2px solid rgba(100, 116, 139, 0.4);
 }
 
 .marker-cluster-large div {
-    background-color: var(--accent-danger);
+    background-color: #64748B;
     color: white;
     font-weight: 600;
     display: flex;
