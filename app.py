@@ -232,6 +232,9 @@ def new_incident():
         try:
             latitude = float(latitude)
             longitude = float(longitude)
+            # Privacy: Round to 4 decimal places (~11m accuracy)
+            latitude = round(latitude, 4)
+            longitude = round(longitude, 4)
         except ValueError:
             flash('Invalid latitude or longitude values.', 'error')
             return redirect(url_for('new_incident'))
@@ -369,6 +372,10 @@ def api_report_sos():
         if not latitude or not longitude:
             return jsonify({'success': False, 'error': 'Location required'}), 400
         
+        # Privacy: Round to 4 decimal places (~11m accuracy)
+        latitude = round(float(latitude), 4)
+        longitude = round(float(longitude), 4)
+        
         conn = get_db()
         cursor = conn.cursor()
         
@@ -377,7 +384,7 @@ def api_report_sos():
             INSERT INTO incidents 
             (user_id, incident_type, description, latitude, longitude, status, priority, is_sos)
             VALUES (?, ?, ?, ?, ?, 'High Alert', 'Critical', 1)
-        ''', (session['user_id'], incident_type, description, float(latitude), float(longitude)))
+        ''', (session['user_id'], incident_type, description, latitude, longitude))
         
         incident_id = cursor.lastrowid
         conn.commit()
@@ -425,6 +432,9 @@ def api_poll_incidents():
 @admin_required
 def admin_dashboard():
     """Admin dashboard to monitor all high-priority incidents"""
+    # Audit log: Track admin access to sensitive incident data
+    print(f"[AUDIT] Admin access: user_id={session.get('user_id')}, username={session.get('username')}, timestamp={datetime.now().isoformat()}, action='VIEW_GLOBAL_INCIDENT_MAP'")
+    
     conn = get_db()
     cursor = conn.cursor()
     
