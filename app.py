@@ -24,6 +24,30 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Admin required decorator
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Please login to access this page.', 'warning')
+            return redirect(url_for('login'))
+        
+        # Check if user is admin
+        conn = get_db()
+        cursor = conn.cursor()
+        user = cursor.execute(
+            'SELECT is_admin FROM users WHERE id = ?', 
+            (session['user_id'],)
+        ).fetchone()
+        conn.close()
+        
+        if not user or not user['is_admin']:
+            flash('Access denied. Admin privileges required.', 'error')
+            return redirect(url_for('dashboard'))
+        
+        return f(*args, **kwargs)
+    return decorated_function
+
 # Routes
 @app.route('/')
 def index():
@@ -85,6 +109,7 @@ def login():
         if user and bcrypt.checkpw(password.encode('utf-8'), user['password_hash']):
             session['user_id'] = user['id']
             session['username'] = user['username']
+            session['is_admin'] = bool(user.get('is_admin', 0))
             flash(f'Welcome back, {user["username"]}!', 'success')
             return redirect(url_for('dashboard'))
         else:
@@ -384,6 +409,7 @@ def api_poll_incidents():
 # Admin Dashboard - View all High Alert incidents
 @app.route('/admin/dashboard')
 @login_required
+@admin_required
 def admin_dashboard():
     """Admin dashboard to monitor all high-priority incidents"""
     conn = get_db()
@@ -415,6 +441,7 @@ def admin_dashboard():
 # API endpoint for admin to poll new alerts
 @app.route('/api/admin/poll/alerts')
 @login_required
+@admin_required
 def api_admin_poll_alerts():
     """Admin polling endpoint for new high alerts"""
     last_id = request.args.get('last_id', 0, type=int)
