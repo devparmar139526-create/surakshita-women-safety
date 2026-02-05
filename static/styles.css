@@ -59,17 +59,27 @@ body {
 }
 
 /* Clean Card Styles - Remove AI Gradients */
-.card, .stat-card, .dark-card {
+.card, .stat-card, .dark-card, .card-minimal {
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.card:hover, .stat-card:hover {
+.card:hover, .stat-card:hover, .card-minimal:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* FontAwesome Icons - Muted Professional Colors */
+.fa-shield-alt, .fa-shield-halved, .fa-chart-line, .fa-exclamation-triangle {
+    color: var(--accent);
+    opacity: 0.8;
+}
+
+.fa-user-shield, .fa-lock {
+    color: var(--accent);
 }
 
 /* Custom Marker Cluster Styles - Minimal Design */
@@ -174,14 +184,14 @@ body {
     background: var(--text-secondary);
 }
 
-/* Loading Animation - Indigo Theme */
+/* Loading Animation - Modern Slate Theme */
 .loading {
     display: inline-block;
     width: 20px;
     height: 20px;
-    border: 3px solid var(--border-light);
+    border: 3px solid var(--border);
     border-radius: 50%;
-    border-top-color: var(--accent-primary);
+    border-top-color: var(--accent);
     animation: spin 0.8s linear infinite;
 }
 

@@ -19,7 +19,7 @@ def validate_coordinates(latitude: float, longitude: float) -> Tuple[bool, Optio
         
         # Strict bounding box for India geographic limits
         if not (6.0 <= lat <= 38.0) or not (68.0 <= lon <= 98.0):
-            return False, "Services are currently only available within India."
+            return False, "Reports are only permitted within India."
         
         return True, None
     

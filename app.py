@@ -100,12 +100,12 @@ def admin_login():
         
         # Hardcoded admin credentials
         if username == 'admin' and password == 'admin':
-            session['is_admin_portal'] = True
+            session['is_admin_logged_in'] = True
             session['admin_username'] = 'admin'
-            flash('Admin portal access granted.', 'success')
+            flash('Admin Portal Accessed', 'success')
             return redirect(url_for('admin_dashboard'))
         
-        flash('Invalid Admin Credentials', 'error')
+        flash('Invalid Credentials', 'error')
     
     return render_template('admin_login.html')
 
@@ -474,19 +474,18 @@ def api_poll_incidents():
 @app.route('/admin/dashboard')
 @admin_only
 def admin_dashboard():
-    """Admin dashboard to monitor all high-priority incidents"""
+    """Admin dashboard - Central Dispatch Monitor showing ALL incidents"""
     # Audit log: Track admin portal access
     print(f"[AUDIT] Admin Portal Access: username={session.get('admin_username')}, timestamp={datetime.now().isoformat()}, action='VIEW_ADMIN_DASHBOARD'")
     
     conn = get_db()
     cursor = conn.cursor()
     
-    # Get all high alert incidents (you can add admin role check here)
-    high_alerts = cursor.execute('''
+    # Central Dispatch: Show ALL incidents for admin to dispatch help
+    all_incidents = cursor.execute('''
         SELECT i.*, u.username, u.email
         FROM incidents i
         JOIN users u ON i.user_id = u.id
-        WHERE i.status = 'High Alert' OR i.is_sos = 1
         ORDER BY i.created_at DESC
     ''').fetchall()
     
@@ -502,12 +501,11 @@ def admin_dashboard():
     
     conn.close()
     
-    return render_template('admin_dashboard.html', high_alerts=high_alerts, stats=stats)
+    return render_template('admin_dashboard.html', high_alerts=all_incidents, stats=stats)
 
 # API endpoint for admin to poll new alerts
 @app.route('/api/admin/poll/alerts')
-@login_required
-@admin_required
+@admin_only
 def api_admin_poll_alerts():
     """Admin polling endpoint for new high alerts"""
     last_id = request.args.get('last_id', 0, type=int)
