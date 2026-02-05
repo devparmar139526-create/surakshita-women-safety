@@ -128,7 +128,7 @@ def login():
         if user and bcrypt.checkpw(password.encode('utf-8'), user['password_hash']):
             session['user_id'] = user['id']
             session['username'] = user['username']
-            session['is_admin'] = bool(user.get('is_admin', 0))
+            session['is_admin'] = bool(user['is_admin']) if 'is_admin' in user.keys() else False
             flash(f'Welcome back, {user["username"]}!', 'success')
             return redirect(url_for('dashboard'))
         else:

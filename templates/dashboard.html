@@ -482,6 +482,10 @@ new Chart(categoryCtx, {
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: {
+            duration: 750,
+            easing: 'easeInOutQuart'
+        },
         plugins: {
             legend: {
                 display: false
@@ -537,6 +541,10 @@ new Chart(timelineCtx, {
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: {
+            duration: 750,
+            easing: 'easeInOutQuart'
+        },
         plugins: {
             legend: {
                 display: false
@@ -568,10 +576,33 @@ document.getElementById('sosButton').addEventListener('click', function() {
     document.getElementById('sosModal').classList.add('active');
 });
 
-// Close SOS Modal
+// Open SOS Modal with Smooth Transition
+function openSosModal() {
+    const modal = document.getElementById('sosModal');
+    modal.style.display = 'flex';
+    // Use a small timeout to allow display:flex to register before opacity change
+    setTimeout(() => {
+        modal.classList.add('active');
+        const modalContent = modal.querySelector('.bg-gray-900');
+        if (modalContent) {
+            modalContent.style.transform = 'scale(1)';
+        }
+    }, 10);
+}
+
+// Close SOS Modal with Smooth Transition
 function closeSosModal() {
-    document.getElementById('sosModal').classList.remove('active');
-    document.getElementById('sosStatus').innerHTML = '';
+    const modal = document.getElementById('sosModal');
+    modal.classList.remove('active');
+    const modalContent = modal.querySelector('.bg-gray-900');
+    if (modalContent) {
+        modalContent.style.transform = 'scale(0.95)';
+    }
+    // Wait for CSS transition (0.3s) before hiding
+    setTimeout(() => {
+        modal.style.display = 'none';
+        document.getElementById('sosStatus').innerHTML = '';
+    }, 300);
 }
 
 // Send SOS Alert
@@ -683,6 +714,15 @@ function pollForNewIncidents() {
                     showNotification('New Incident', `${data.count} new incident(s) reported`, 'info');
                 }
                 
+                // Smooth fly to new incidents on map
+                if (data.incidents.length > 0) {
+                    const bounds = L.latLngBounds(data.incidents.map(inc => [inc.latitude, inc.longitude]));
+                    map.flyToBounds(bounds, { 
+                        padding: [50, 50],
+                        duration: 1.5 // Smooth 1.5 second flight
+                    });
+                }
+                
                 // Update last update time
                 updateLastUpdateTime();
                 
@@ -700,11 +740,13 @@ function updateLastUpdateTime() {
     document.getElementById('lastUpdateTime').textContent = timeString;
 }
 
-// Show notification
+// Enhanced Notification with Slide-In Animation
 function showNotification(title, message, type = 'info') {
     // Create notification element
     const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 z-50 max-w-sm w-full bg-gray-900 border rounded-lg shadow-2xl p-4 transition-all duration-300';
+    // Start off-screen to the right
+    notification.style.transform = 'translateX(120%)';
+    notification.className = 'fixed top-4 right-4 z-50 max-w-sm w-full bg-white border-l-4 p-4 shadow-xl rounded-lg transition-all duration-500 ease-in-out';
     
     let iconColor = 'text-blue-400';
     let icon = 'fa-info-circle';
@@ -728,10 +770,10 @@ function showNotification(title, message, type = 'info') {
                 <i class="fas ${icon} ${iconColor} text-2xl"></i>
             </div>
             <div class="ml-3 flex-1">
-                <h3 class="text-sm font-semibold text-white">${title}</h3>
-                <p class="mt-1 text-sm text-gray-300">${message}</p>
+                <h3 class="text-sm font-semibold text-gray-900">${title}</h3>
+                <p class="mt-1 text-sm text-gray-600">${message}</p>
             </div>
-            <button onclick="this.parentElement.parentElement.remove()" class="ml-3 text-gray-400 hover:text-white">
+            <button onclick="this.parentElement.parentElement.style.transform='translateX(120%)'; setTimeout(() => this.parentElement.parentElement.remove(), 500);" class="ml-3 text-gray-400 hover:text-gray-600">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -739,10 +781,15 @@ function showNotification(title, message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    // Auto-remove after 5 seconds
+    // Trigger slide-in animation
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translateX(0)';
+    });
+    
+    // Auto-remove after 5 seconds with slide-out
     setTimeout(() => {
-        notification.style.opacity = '0';
-        setTimeout(() => notification.remove(), 300);
+        notification.style.transform = 'translateX(120%)';
+        setTimeout(() => notification.remove(), 500);
     }, 5000);
 }
 

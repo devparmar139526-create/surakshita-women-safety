@@ -1,5 +1,28 @@
 /* Surakshita - Minimal Professional Design */
 
+/* Smooth Global Transitions - GPU Accelerated */
+* {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Page Entrance Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+main {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
 /* Minimal Theme Variables - Clean Slate & Indigo Palette */
 :root {
     /* Background Colors */
@@ -153,6 +176,22 @@
     .chart-container {
         height: 250px !important;
     }
+}
+
+/* Refined SOS Pulse with Ripple Effect */
+@keyframes sos-ripple {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.sos-button {
+    animation: sos-ripple 2s infinite;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+.sos-button:hover {
+    transform: scale(1.1);
 }
 
 /* Minimal Pulse Animation for Critical Incidents */
