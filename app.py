@@ -41,6 +41,15 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Admin portal decorator - separate from user authentication
+def admin_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('is_admin_portal'):
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 # Admin required decorator
 def admin_required(f):
     @wraps(f)
@@ -65,12 +74,40 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Admin portal decorator - separate from user authentication
+def admin_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('is_admin_portal'):
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 # Routes
 @app.route('/')
 def index():
     if 'user_id' in session:
         return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
+
+# Admin Portal Login - Separate from user authentication
+@app.route('/admin', methods=['GET', 'POST'])
+def admin_login():
+    """Dedicated admin portal login with hardcoded credentials"""
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        # Hardcoded admin credentials
+        if username == 'admin' and password == 'admin':
+            session['is_admin_portal'] = True
+            session['admin_username'] = 'admin'
+            flash('Admin portal access granted.', 'success')
+            return redirect(url_for('admin_dashboard'))
+        
+        flash('Invalid Admin Credentials', 'error')
+    
+    return render_template('admin_login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 @limiter.limit("3 per hour")
@@ -433,14 +470,13 @@ def api_poll_incidents():
         'count': len(new_incidents)
     })
 
-# Admin Dashboard - View all High Alert incidents
+# Admin Dashboard - Secure Portal with Separate Authentication
 @app.route('/admin/dashboard')
-@login_required
-@admin_required
+@admin_only
 def admin_dashboard():
     """Admin dashboard to monitor all high-priority incidents"""
-    # Audit log: Track admin access to sensitive incident data
-    print(f"[AUDIT] Admin access: user_id={session.get('user_id')}, username={session.get('username')}, timestamp={datetime.now().isoformat()}, action='VIEW_GLOBAL_INCIDENT_MAP'")
+    # Audit log: Track admin portal access
+    print(f"[AUDIT] Admin Portal Access: username={session.get('admin_username')}, timestamp={datetime.now().isoformat()}, action='VIEW_ADMIN_DASHBOARD'")
     
     conn = get_db()
     cursor = conn.cursor()

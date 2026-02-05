@@ -54,12 +54,6 @@
                     <a href="{{ url_for('incidents') }}" class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md text-sm font-medium transition {% if request.endpoint == 'incidents' %}bg-white bg-opacity-20{% endif %}">
                         <i class="fas fa-exclamation-triangle mr-2"></i>Incidents
                     </a>
-                    {% if session.get('is_admin') %}
-                    <a href="{{ url_for('admin_dashboard') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">
-                        <i class="fas fa-shield-alt mr-2"></i>Admin Panel
-                    </a>
-                    {% endif %}
-                    {% endif %}
                     <a href="{{ url_for('new_incident') }}" class="bg-white {% if request.endpoint == 'dashboard' %}text-purple-600{% else %}text-purple-700{% endif %} hover:bg-gray-100 px-4 py-2 rounded-md text-sm font-medium transition">
                         <i class="fas fa-plus mr-2"></i>Report
                     </a>
