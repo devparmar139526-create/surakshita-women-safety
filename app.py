@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask_wtf.csrf import CSRFProtect
 import sqlite3
 import bcrypt
 from functools import wraps
@@ -7,6 +8,7 @@ import os
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Generate a secure secret key
+csrf = CSRFProtect(app)  # Initialize CSRF protection
 
 # Database helper function
 def get_db():

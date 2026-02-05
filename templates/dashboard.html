@@ -583,6 +583,7 @@ function sendSOS() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({
                     latitude: latitude,

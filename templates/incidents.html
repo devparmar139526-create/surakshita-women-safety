@@ -66,6 +66,7 @@
                 <div class="mt-4 md:mt-0 md:ml-6 flex flex-col space-y-2">
                     {% if incident.status == 'Pending' %}
                     <form action="{{ url_for('update_incident_status', incident_id=incident.id) }}" method="POST" class="inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <input type="hidden" name="status" value="Resolved">
                         <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium">
                             <i class="fas fa-check mr-1"></i> Mark Resolved
@@ -73,6 +74,7 @@
                     </form>
                     {% else %}
                     <form action="{{ url_for('update_incident_status', incident_id=incident.id) }}" method="POST" class="inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <input type="hidden" name="status" value="Pending">
                         <button type="submit" class="w-full px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 text-sm font-medium">
                             <i class="fas fa-undo mr-1"></i> Mark Pending
@@ -80,6 +82,7 @@
                     </form>
                     {% endif %}
                     <form action="{{ url_for('delete_incident', incident_id=incident.id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this incident?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium">
                             <i class="fas fa-trash mr-1"></i> Delete
                         </button>
