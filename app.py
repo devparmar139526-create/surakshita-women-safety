@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_wtf.csrf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import sqlite3
 import bcrypt
 from functools import wraps
@@ -9,6 +11,12 @@ import os
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Generate a secure secret key
 csrf = CSRFProtect(app)  # Initialize CSRF protection
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
+)
 
 # Database helper function
 def get_db():
@@ -58,6 +66,7 @@ def index():
     return redirect(url_for('login'))
 
 @app.route('/register', methods=['GET', 'POST'])
+@limiter.limit("3 per hour")
 def register():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -96,6 +105,7 @@ def register():
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -345,6 +355,7 @@ def api_analytics():
 # SOS Emergency Reporting Endpoint
 @app.route('/api/report', methods=['POST'])
 @login_required
+@limiter.limit("1 per minute")
 def api_report_sos():
     """Quick SOS reporting endpoint for emergency situations"""
     try:
