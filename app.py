@@ -7,15 +7,22 @@ import bcrypt
 from functools import wraps
 from datetime import datetime
 import os
+from config import config
 
+# Initialize Flask app
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # Generate a secure secret key
+
+# Load configuration based on FLASK_ENV
+env = os.getenv('FLASK_ENV', 'development')
+app.config.from_object(config[env])
+
+# Initialize extensions
 csrf = CSRFProtect(app)  # Initialize CSRF protection
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
     default_limits=["200 per day", "50 per hour"],
-    storage_uri="memory://"
+    storage_uri=app.config.get('RATELIMIT_STORAGE_URL', 'memory://')
 )
 
 # Database helper function

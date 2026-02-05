@@ -1,12 +1,18 @@
 """Configuration management for Surakshita"""
 import os
+import secrets
 from dotenv import load_dotenv
 
 load_dotenv()
 
 class Config:
     """Base configuration"""
-    SECRET_KEY = os.getenv('SECRET_KEY', os.urandom(32))
+    # Security: Load from environment or generate warning
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    if not SECRET_KEY:
+        print("WARNING: SECRET_KEY not set in environment! Using generated key (not recommended for production)")
+        SECRET_KEY = secrets.token_hex(32)
+    
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Session configuration
