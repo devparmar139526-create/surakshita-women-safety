@@ -8,6 +8,7 @@ from functools import wraps
 from datetime import datetime
 import os
 from config import config
+from validators import validate_coordinates
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -45,7 +46,8 @@ def login_required(f):
 def admin_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get('is_admin_portal'):
+        if not session.get('is_admin_logged_in'):
+            flash('Admin access required.', 'error')
             return redirect(url_for('admin_login'))
         return f(*args, **kwargs)
     return decorated_function
@@ -74,15 +76,6 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# Admin portal decorator - separate from user authentication
-def admin_only(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not session.get('is_admin_portal'):
-            return redirect(url_for('admin_login'))
-        return f(*args, **kwargs)
-    return decorated_function
-
 # Routes
 @app.route('/')
 def index():
@@ -100,12 +93,14 @@ def admin_login():
         
         # Hardcoded admin credentials
         if username == 'admin' and password == 'admin':
+            session.clear()  # Clear any existing user sessions to avoid conflicts
             session['is_admin_logged_in'] = True
             session['admin_username'] = 'admin'
             flash('Admin Portal Accessed', 'success')
-            return redirect(url_for('admin_dashboard'))
+            return redirect(url_for('admin_dashboard'))  # Explicit return for redirect
         
         flash('Invalid Credentials', 'error')
+        return redirect(url_for('admin_login'))  # Redirect back to login on failure
     
     return render_template('admin_login.html')
 
@@ -197,23 +192,23 @@ def dashboard():
         WHERE user_id = ?
     ''', (session['user_id'],)).fetchone()
     
-    # Get incidents by category for bar chart
-    incidents_by_category = cursor.execute('''
+    # Convert Row objects to dictionaries for JSON serialization
+    incidents_by_category = [dict(row) for row in cursor.execute('''
         SELECT incident_type, COUNT(*) as count
         FROM incidents
         WHERE user_id = ?
         GROUP BY incident_type
         ORDER BY count DESC
-    ''', (session['user_id'],)).fetchall()
+    ''', (session['user_id'],)).fetchall()]
     
     # Get reports over time for line chart (last 30 days)
-    reports_over_time = cursor.execute('''
+    reports_over_time = [dict(row) for row in cursor.execute('''
         SELECT DATE(created_at) as date, COUNT(*) as count
         FROM incidents
         WHERE user_id = ? AND created_at >= DATE('now', '-30 days')
         GROUP BY DATE(created_at)
         ORDER BY date ASC
-    ''', (session['user_id'],)).fetchall()
+    ''', (session['user_id'],)).fetchall()]
     
     # Get recent incidents
     recent_incidents = cursor.execute('''
@@ -276,6 +271,13 @@ def new_incident():
         try:
             latitude = float(latitude)
             longitude = float(longitude)
+            
+            # Validate coordinates are within Indian territories
+            is_valid, error_msg = validate_coordinates(latitude, longitude)
+            if not is_valid:
+                flash(error_msg, 'error')
+                return redirect(url_for('new_incident'))
+            
             # Privacy: Round to 4 decimal places (~11m accuracy)
             latitude = round(latitude, 4)
             longitude = round(longitude, 4)
@@ -330,6 +332,130 @@ def update_incident_status(incident_id):
     
     flash(f'Incident status updated to {new_status}.', 'success')
     return redirect(url_for('incidents'))
+
+# API endpoint for dispatching emergency units (Admin only) - New Route Format
+@app.route('/api/dispatch/<int:incident_id>', methods=['POST'])
+@csrf.exempt  # Exempt from CSRF for API endpoint
+@login_required
+@admin_required
+def dispatch_emergency_unit(incident_id):
+    """Admin endpoint to dispatch emergency units to incidents"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+        
+        unit = data.get('unit')
+        
+        if not unit:
+            return jsonify({'success': False, 'message': 'Missing unit parameter'}), 400
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # Verify incident exists
+        incident = cursor.execute(
+            'SELECT * FROM incidents WHERE id = ?',
+            (incident_id,)
+        ).fetchone()
+        
+        if not incident:
+            conn.close()
+            return jsonify({'success': False, 'message': 'Incident not found'}), 404
+        
+        # Update incident status to 'Dispatched' with unit info
+        new_status = 'Dispatched'
+        dispatch_note = f'{unit} unit dispatched at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
+        
+        cursor.execute('''
+            UPDATE incidents 
+            SET status = ?, updated_at = CURRENT_TIMESTAMP 
+            WHERE id = ?
+        ''', (new_status, incident_id))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'{unit} dispatched successfully',
+            'incident_id': incident_id,
+            'unit': unit,
+            'status': new_status,
+            'note': dispatch_note
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500
+
+# Legacy API endpoint for backward compatibility with admin dashboard
+@app.route('/api/dispatch', methods=['POST'])
+@csrf.exempt  # Exempt from CSRF for API endpoint
+@admin_only
+def dispatch_emergency_unit_legacy():
+    """Legacy admin endpoint for dispatch (backward compatibility)"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+        
+        alert_id = data.get('alert_id')
+        unit_type = data.get('unit_type')
+        
+        if not alert_id or not unit_type:
+            return jsonify({'success': False, 'message': 'Missing alert_id or unit_type'}), 400
+        
+        # Validate unit type
+        valid_units = ['police', 'ambulance', 'fire', 'swat']
+        if unit_type.lower() not in valid_units:
+            return jsonify({'success': False, 'message': 'Invalid unit type'}), 400
+        
+        # Map unit types to display names
+        unit_names = {
+            'police': 'Police Patrol',
+            'ambulance': 'Ambulance',
+            'fire': 'Fire Brigade',
+            'swat': 'SWAT Team'
+        }
+        
+        unit_display_name = unit_names.get(unit_type.lower(), unit_type)
+        new_status = f'Dispatched: {unit_display_name}'
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # Verify incident exists
+        incident = cursor.execute(
+            'SELECT * FROM incidents WHERE id = ?',
+            (alert_id,)
+        ).fetchone()
+        
+        if not incident:
+            conn.close()
+            return jsonify({'success': False, 'message': 'Incident not found'}), 404
+        
+        # Update incident status with dispatch information
+        cursor.execute('''
+            UPDATE incidents 
+            SET status = ?, updated_at = CURRENT_TIMESTAMP 
+            WHERE id = ?
+        ''', (new_status, alert_id))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success': True, 
+            'message': f'{unit_display_name} dispatched successfully',
+            'alert_id': alert_id,
+            'unit_type': unit_display_name,
+            'status': new_status
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500
 
 @app.route('/incidents/<int:incident_id>/delete', methods=['POST'])
 @login_required
@@ -416,6 +542,11 @@ def api_report_sos():
         if not latitude or not longitude:
             return jsonify({'success': False, 'error': 'Location required'}), 400
         
+        # Validate coordinates are within Indian territories
+        is_valid, error_msg = validate_coordinates(latitude, longitude)
+        if not is_valid:
+            return jsonify({'success': False, 'error': error_msg}), 400
+        
         # Privacy: Round to 4 decimal places (~11m accuracy)
         latitude = round(float(latitude), 4)
         longitude = round(float(longitude), 4)
@@ -481,51 +612,78 @@ def admin_dashboard():
     conn = get_db()
     cursor = conn.cursor()
     
-    # Central Dispatch: Show ALL incidents for admin to dispatch help
-    all_incidents = cursor.execute('''
+    # Separate active alerts (not resolved) from resolved incidents
+    active_alerts = cursor.execute('''
         SELECT i.*, u.username, u.email
         FROM incidents i
         JOIN users u ON i.user_id = u.id
+        WHERE i.status != 'Resolved'
         ORDER BY i.created_at DESC
     ''').fetchall()
     
-    # Get statistics
+    resolved_incidents = cursor.execute('''
+        SELECT i.*, u.username, u.email
+        FROM incidents i
+        JOIN users u ON i.user_id = u.id
+        WHERE i.status = 'Resolved'
+        ORDER BY i.created_at DESC
+    ''').fetchall()
+    
+    # Get statistics for admin view
     stats = cursor.execute('''
         SELECT 
             COUNT(*) as total_alerts,
-            SUM(CASE WHEN status = 'High Alert' THEN 1 ELSE 0 END) as active_alerts,
+            SUM(CASE WHEN status != 'Resolved' THEN 1 ELSE 0 END) as active_alerts,
             SUM(CASE WHEN status = 'Resolved' THEN 1 ELSE 0 END) as resolved_alerts
         FROM incidents
-        WHERE is_sos = 1
     ''').fetchone()
     
     conn.close()
     
-    return render_template('admin_dashboard.html', high_alerts=all_incidents, stats=stats)
+    return render_template('admin_dashboard.html', 
+                         active_alerts=active_alerts, 
+                         resolved_incidents=resolved_incidents, 
+                         stats=stats)
 
 # API endpoint for admin to poll new alerts
 @app.route('/api/admin/poll/alerts')
 @admin_only
 def api_admin_poll_alerts():
-    """Admin polling endpoint for new high alerts"""
+    """Admin polling endpoint for new high alerts with dispatch status"""
     last_id = request.args.get('last_id', 0, type=int)
     
     conn = get_db()
     cursor = conn.cursor()
     
+    # Fetch new alerts with proper serialization, including dispatch status
     new_alerts = cursor.execute('''
         SELECT i.*, u.username, u.email
         FROM incidents i
         JOIN users u ON i.user_id = u.id
-        WHERE (i.status = 'High Alert' OR i.is_sos = 1) AND i.id > ?
+        WHERE (i.status = 'High Alert' OR i.status LIKE 'Dispatched%' OR i.status = 'Dispatched' OR i.is_sos = 1) AND i.id > ?
         ORDER BY i.id DESC
     ''', (last_id,)).fetchall()
     
     conn.close()
     
+    # Strictly convert SQLite Row objects to dictionaries
+    serialized_alerts = []
+    for row in new_alerts:
+        alert_dict = dict(row)
+        # Ensure all datetime objects are converted to strings
+        if 'created_at' in alert_dict and alert_dict['created_at']:
+            alert_dict['created_at'] = str(alert_dict['created_at'])
+        if 'updated_at' in alert_dict and alert_dict['updated_at']:
+            alert_dict['updated_at'] = str(alert_dict['updated_at'])
+        
+        # Ensure dispatch status is included for UI sync
+        alert_dict['is_dispatched'] = alert_dict.get('status', '').startswith('Dispatched')
+        
+        serialized_alerts.append(alert_dict)
+    
     return jsonify({
-        'alerts': [dict(alert) for alert in new_alerts],
-        'count': len(new_alerts)
+        'alerts': serialized_alerts,
+        'count': len(serialized_alerts)
     })
 
 if __name__ == '__main__':

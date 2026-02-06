@@ -4,32 +4,179 @@
 
 {% block content %}
 <style>
-    /* Minimal Professional Theme Overrides */
-    body {
-        background-color: #F8FAFC;
-    }
+    /* Swiss Minimal Dashboard */
     
-    .dark-card {
+    /* Stats Ticker - Horizontal Strip */
+    .stats-ticker {
+        display: flex;
         background: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        border: 1px solid #E5E5E5;
+        border-radius: 0;
+        margin-bottom: 3rem;
     }
     
-    .stat-card {
-        background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
-        border-left: 4px solid;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-        border-top: 1px solid #E2E8F0;
-        border-right: 1px solid #E2E8F0;
-        border-bottom: 1px solid #E2E8F0;
+    .stat-item {
+        flex: 1;
+        padding: 2rem;
+        text-align: center;
+        border-right: 1px solid #E5E5E5;
     }
     
+    .stat-item:last-child {
+        border-right: none;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #737373;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 300;
+        color: #111111;
+        line-height: 1;
+        letter-spacing: -0.03em;
+    }
+    
+    /* Map - No Card Container */
     #map {
         height: 500px;
         width: 100%;
-        border-radius: 0.5rem;
-        border: 1px solid #E2E8F0;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        border: 1px solid #111111;
+        border-radius: 0;
+    }
+    
+    /* Chart Containers - Direct on Background */
+    .chart-wrapper {
+        background: transparent;
+        padding: 0;
+        margin-bottom: 3rem;
+    }
+    
+    .chart-title {
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #111111;
+        margin-bottom: 1.5rem;
+    }
+    
+    .chart-canvas {
+        height: 300px;
+    }
+    
+    /* Minimal Table */
+    .minimal-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #FFFFFF;
+        border: 1px solid #E5E5E5;
+    }
+    
+    .minimal-table thead {
+        border-bottom: 2px solid #111111;
+    }
+    
+    .minimal-table th {
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #111111;
+    }
+    
+    .minimal-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #E5E5E5;
+        font-size: 0.875rem;
+        color: #111111;
+    }
+    
+    .minimal-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* Status Dot - No Pill Background */
+    .status-dot {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .status-dot::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+    
+    .status-pending::before {
+        background: #DC2626;
+    }
+    
+    .status-resolved::before {
+        background: #16A34A;
+    }
+    
+    /* SOS Button - Square Red */
+    .sos-button {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 80px;
+        height: 80px;
+        background: #DC2626;
+        color: #FFFFFF;
+        border: none;
+        border-radius: 0;
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease;
+    }
+    
+    .sos-button:hover {
+        background: #B91C1C;
+    }
+    
+    /* SOS Modal */
+    .sos-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(17, 17, 17, 0.8);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .sos-modal.active {
+        display: flex;
+    }
+
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
     }
     
     .chart-container {
@@ -54,47 +201,33 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     
-    /* SOS Button Styles - Minimal Flat Design */
+    /* BA Team SOS Button - Solid Orange Circle */
     .sos-button {
         position: fixed;
         bottom: 2rem;
         right: 2rem;
         width: 80px;
         height: 80px;
-        background: #EF4444;
+        background: #F29F67;
         border-radius: 50%;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: none;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.2s ease;
         z-index: 1000;
-        border: 3px solid #FFFFFF;
+        transition: all 0.25s ease-in-out;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.06);
     }
     
     .sos-button:hover {
+        background: #E88F57;
         transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.3), 0 4px 6px -2px rgba(239, 68, 68, 0.2);
-        background: #DC2626;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
     }
     
     .sos-button:active {
-        transform: translateY(0);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-    
-    @keyframes pulse-sos {
-        0%, 100% {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(239, 68, 68, 0.4);
-        }
-        50% {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 12px rgba(239, 68, 68, 0);
-        }
-    }
-    
-    .sos-button {
-        animation: pulse-sos 2.5s ease-in-out infinite;
+        transform: scale(0.95);
     }
     
     .sos-modal {
@@ -130,204 +263,142 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 
-<!-- SOS Emergency Button -->
+<!-- BA Team SOS Emergency Button -->
 <div class="sos-button" id="sosButton" title="Emergency SOS - Click to send alert">
     <div class="text-center">
-        <i class="fas fa-exclamation-triangle text-white text-3xl"></i>
-        <div class="text-white text-xs font-bold mt-1">SOS</div>
+        <i class="fas fa-tower-broadcast text-white text-3xl"></i>
     </div>
 </div>
+</style>
+
+<!-- SOS Button -->
+<button class="sos-button" id="sosButton">
+    <i class="fas fa-tower-broadcast"></i>
+</button>
 
 <!-- SOS Modal -->
 <div class="sos-modal" id="sosModal">
-    <div class="bg-gray-900 rounded-lg shadow-2xl p-8 max-w-md w-full mx-4 border border-red-500">
-        <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-red-600 rounded-full mb-4">
-                <i class="fas fa-exclamation-triangle text-white text-3xl"></i>
-            </div>
-            <h2 class="text-2xl font-bold text-white mb-2">Emergency SOS Alert</h2>
-            <p class="text-gray-300">Your location will be shared immediately</p>
+    <div style="background: #FFFFFF; border: 1px solid #E5E5E5; padding: 2rem; max-width: 500px; width: 90%;">
+        <div style="margin-bottom: 2rem;">
+            <h2 style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.03em; color: #111111; margin-bottom: 0.5rem;">EMERGENCY SOS</h2>
+            <p style="font-size: 0.875rem; color: #737373;">Your location will be shared immediately</p>
         </div>
         
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-300 mb-2">Incident Type (Optional)</label>
-                <select id="sosIncidentType" class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-red-500">
-                    <option value="SOS Emergency">Emergency</option>
-                    <option value="SOS - Harassment">Harassment</option>
-                    <option value="SOS - Assault">Assault</option>
-                    <option value="SOS - Stalking">Stalking</option>
-                    <option value="SOS - Threat">Threat</option>
-                    <option value="SOS - Other">Other Emergency</option>
-                </select>
-            </div>
-            
-            <div>
-                <label class="block text-sm font-medium text-gray-300 mb-2">Additional Details (Optional)</label>
-                <textarea id="sosDescription" rows="3" class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Brief description if possible..."></textarea>
-            </div>
-            
-            <div class="flex space-x-3">
-                <button onclick="sendSOS()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-md transition">
-                    <i class="fas fa-paper-plane mr-2"></i>
-                    Send SOS Alert
-                </button>
-                <button onclick="closeSosModal()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-md transition">
-                    Cancel
-                </button>
-            </div>
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #111111; margin-bottom: 0.5rem;">Incident Type</label>
+            <select id="sosIncidentType" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; font-size: 0.875rem; color: #111111;">
+                <option value="SOS Emergency">Emergency</option>
+                <option value="SOS - Harassment">Harassment</option>
+                <option value="SOS - Assault">Assault</option>
+                <option value="SOS - Stalking">Stalking</option>
+                <option value="SOS - Threat">Threat</option>
+                <option value="SOS - Other">Other Emergency</option>
+            </select>
         </div>
         
-        <div id="sosStatus" class="mt-4 text-center text-sm"></div>
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #111111; margin-bottom: 0.5rem;">Additional Details</label>
+            <textarea id="sosDescription" rows="3" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; font-size: 0.875rem; color: #111111;" placeholder="Brief description if possible..."></textarea>
+        </div>
+        
+        <div style="display: flex; gap: 1rem;">
+            <button onclick="sendSOS()" style="flex: 1; padding: 0.875rem; background: #DC2626; color: #FFFFFF; border: none; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; cursor: pointer;">
+                Send SOS
+            </button>
+            <button onclick="closeSosModal()" style="flex: 1; padding: 0.875rem; background: transparent; color: #111111; border: 1px solid #E5E5E5; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; cursor: pointer;">
+                Cancel
+            </button>
+        </div>
+        
+        <div id="sosStatus" style="margin-top: 1rem; text-align: center; font-size: 0.875rem;"></div>
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="swiss-container">
     <!-- Welcome Header -->
-    <div class="mb-8 flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-white">Welcome, {{ session.username }}!</h1>
-            <p class="mt-2 text-gray-400">Monitor and analyze safety incidents in real-time</p>
-        </div>
-        <div class="text-right">
-            <div class="text-sm text-gray-400">Last Updated: <span id="lastUpdateTime">Just now</span></div>
-            <div class="text-xs text-gray-500 mt-1">Auto-refresh: <span class="text-green-400">●</span> Active</div>
-        </div>
+    <div style="margin-bottom: 3rem;">
+        <h1 style="font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; color: #111111; margin-bottom: 0.25rem;">{{ session.username }}</h1>
+        <p style="font-size: 0.875rem; color: #737373;">Safety Analytics Dashboard</p>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="stat-card rounded-lg p-6 border-blue-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-400 uppercase">Total Incidents</p>
-                    <p class="text-4xl font-bold text-white mt-2">{{ stats.total or 0 }}</p>
-                </div>
-                <div class="bg-blue-500 bg-opacity-20 rounded-full p-4">
-                    <i class="fas fa-clipboard-list text-blue-400 text-3xl"></i>
-                </div>
-            </div>
+    <!-- Stats Ticker -->
+    <div class="stats-ticker">
+        <div class="stat-item">
+            <div class="stat-label">Total Incidents</div>
+            <div class="stat-number">{{ stats.total or 0 }}</div>
         </div>
-
-        <div class="stat-card rounded-lg p-6 border-yellow-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-400 uppercase">Pending</p>
-                    <p class="text-4xl font-bold text-white mt-2">{{ stats.pending or 0 }}</p>
-                </div>
-                <div class="bg-yellow-500 bg-opacity-20 rounded-full p-4">
-                    <i class="fas fa-clock text-yellow-400 text-3xl"></i>
-                </div>
-            </div>
+        <div class="stat-item">
+            <div class="stat-label">Pending</div>
+            <div class="stat-number">{{ stats.pending or 0 }}</div>
         </div>
-
-        <div class="stat-card rounded-lg p-6 border-green-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-400 uppercase">Resolved</p>
-                    <p class="text-4xl font-bold text-white mt-2">{{ stats.resolved or 0 }}</p>
-                </div>
-                <div class="bg-green-500 bg-opacity-20 rounded-full p-4">
-                    <i class="fas fa-check-circle text-green-400 text-3xl"></i>
-                </div>
-            </div>
+        <div class="stat-item">
+            <div class="stat-label">Resolved</div>
+            <div class="stat-number">{{ stats.resolved or 0 }}</div>
         </div>
     </div>
 
     <!-- Map Section -->
-    <div class="mb-8">
-        <div class="dark-card rounded-lg p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-white">
-                    <i class="fas fa-map-marked-alt mr-2 text-purple-400"></i>Incident Heatmap
-                </h2>
-                <span class="text-sm text-gray-400">Click markers for details</span>
-            </div>
-            <div id="map"></div>
-        </div>
+    <div style="margin-bottom: 3rem;">
+        <h2 class="chart-title">Incident Heatmap</h2>
+        <div id="map"></div>
     </div>
 
     <!-- Charts Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 3rem;">
         <!-- Bar Chart -->
-        <div class="chart-container">
-            <h3 class="text-lg font-semibold text-white mb-4">
-                <i class="fas fa-chart-bar mr-2 text-purple-400"></i>Incidents by Category
-            </h3>
-            <canvas id="categoryChart"></canvas>
+        <div class="chart-wrapper">
+            <h3 class="chart-title">Incidents by Category</h3>
+            <div class="chart-canvas">
+                <canvas id="categoryChart"></canvas>
+            </div>
         </div>
 
         <!-- Line Chart -->
-        <div class="chart-container">
-            <h3 class="text-lg font-semibold text-white mb-4">
-                <i class="fas fa-chart-line mr-2 text-purple-400"></i>Reports Over Time (30 Days)
-            </h3>
-            <canvas id="timelineChart"></canvas>
+        <div class="chart-wrapper">
+            <h3 class="chart-title">Reports Over Time (30 Days)</h3>
+            <div class="chart-canvas">
+                <canvas id="timelineChart"></canvas>
+            </div>
         </div>
     </div>
 
     <!-- Recent Incidents -->
-    <div class="dark-card rounded-lg overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-700 flex justify-between items-center">
-            <h2 class="text-xl font-semibold text-white">
-                <i class="fas fa-history mr-2 text-purple-400"></i>Recent Incidents
-            </h2>
-            <a href="{{ url_for('incidents') }}" class="text-purple-400 hover:text-purple-300 text-sm font-medium">
-                View All <i class="fas fa-arrow-right ml-1"></i>
-            </a>
-        </div>
+    <div style="margin-bottom: 3rem;">
+        <h2 class="chart-title">Recent Incidents</h2>
         
         {% if incidents %}
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-700">
-                <thead class="bg-gray-800 bg-opacity-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Type</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Description</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Location</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-700">
-                    {% for incident in incidents %}
-                    <tr class="hover:bg-gray-800 hover:bg-opacity-30 transition">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm font-medium text-white">{{ incident.incident_type }}</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="text-sm text-gray-300">{{ incident.description[:50] }}{% if incident.description|length > 50 %}...{% endif %}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm text-gray-400">{{ "%.4f"|format(incident.latitude) }}, {{ "%.4f"|format(incident.longitude) }}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            {% if incident.status == 'Pending' %}
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-500 bg-opacity-20 text-yellow-400 border border-yellow-500">
-                                <i class="fas fa-clock mr-1"></i> Pending
-                            </span>
-                            {% else %}
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-500 bg-opacity-20 text-green-400 border border-green-500">
-                                <i class="fas fa-check-circle mr-1"></i> Resolved
-                            </span>
-                            {% endif %}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                            {{ incident.created_at[:10] }}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        <table class="minimal-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for incident in incidents %}
+                <tr>
+                    <td>{{ incident.incident_type }}</td>
+                    <td>{{ incident.description[:50] }}{% if incident.description|length > 50 %}...{% endif %}</td>
+                    <td style="font-size: 0.75rem; color: #737373;">{{ "%.4f"|format(incident.latitude) }}, {{ "%.4f"|format(incident.longitude) }}</td>
+                    <td>
+                        {% if incident.status == 'Pending' %}
+                        <span class="status-dot status-pending">Pending</span>
+                        {% else %}
+                        <span class="status-dot status-resolved">Resolved</span>
+                        {% endif %}
+                    </td>
+                    <td style="color: #737373;">{{ incident.created_at[:10] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         {% else %}
-        <div class="px-6 py-12 text-center">
-            <i class="fas fa-inbox text-gray-600 text-5xl mb-4"></i>
-            <p class="text-gray-400 mb-4">No incidents reported yet</p>
-            <a href="{{ url_for('new_incident') }}" class="inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 transition">
-                <i class="fas fa-plus mr-2"></i>
-                Report Your First Incident
-            </a>
+        <div style="background: #FFFFFF; border: 1px solid #E5E5E5; padding: 3rem; text-align: center;">
+            <p style="color: #737373; margin-bottom: 1rem;">No incidents reported yet</p>
+            <a href="{{ url_for('new_incident') }}" class="btn">Report First Incident</a>
         </div>
         {% endif %}
     </div>
@@ -342,91 +413,76 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <script>
-// Set bounds to strictly cover India
+// Map Configuration - Grayscale CartoDB Positron
 const indiaBounds = L.latLngBounds(
-    [6.4626999, 68.1097], // Southwest
-    [35.513327, 97.395358] // Northeast
+    [6.0, 68.0],
+    [38.0, 98.0]
 );
 
 let map = L.map('map', {
     maxBounds: indiaBounds,
     maxBoundsViscosity: 1.0
-}).setView([20.5937, 78.9629], 5); // Center of India
+}).setView([20.5937, 78.9629], 5);
 
-// Use a minimal Light Tile Layer for cleaner aesthetic
+// Grayscale/High-Contrast Tiles - CartoDB Positron
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '©OpenStreetMap',
+    attribution: '©OpenStreetMap ©CartoDB',
     subdomains: 'abcd',
     maxZoom: 18
 }).addTo(map);
 
-// Fetch incident data and render on map
+// Fetch incident data
 fetch('/api/incidents')
     .then(response => response.json())
     .then(data => {
         if (data.length === 0) {
             L.marker([28.6139, 77.2090]).addTo(map)
-                .bindPopup('<b>No incidents yet</b><br>Report your first incident to see it here!')
+                .bindPopup('<b>No incidents yet</b>')
                 .openPopup();
             return;
         }
 
-        // Create marker cluster group
         const markers = L.markerClusterGroup({
             iconCreateFunction: function(cluster) {
                 const count = cluster.getChildCount();
-                let size = 'small';
-                if (count > 10) size = 'large';
-                else if (count > 5) size = 'medium';
-                
                 return L.divIcon({
                     html: '<div><span>' + count + '</span></div>',
-                    className: 'marker-cluster marker-cluster-' + size,
+                    className: 'marker-cluster',
                     iconSize: L.point(40, 40)
                 });
             }
         });
 
-        // Create heatmap data array
         const heatData = [];
         
-        // Add markers for each incident
         data.forEach(incident => {
             const lat = parseFloat(incident.latitude);
             const lng = parseFloat(incident.longitude);
             
-            // Add to heatmap data
             heatData.push([lat, lng, 0.5]);
             
-            // Determine marker color based on status
-            const markerColor = incident.status === 'Pending' ? 'red' : 'green';
+            // Simple black markers
             const markerIcon = L.divIcon({
                 className: 'custom-marker',
-                html: `<div style="background-color: ${markerColor}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.5);"></div>`,
-                iconSize: [12, 12]
+                html: `<div style="background-color: #111111; width: 10px; height: 10px; border-radius: 50%; border: 2px solid white;"></div>`,
+                iconSize: [10, 10]
             });
             
             const marker = L.marker([lat, lng], { icon: markerIcon });
             
-            // Create popup content
             const popupContent = `
-                <div style="color: #0F172A;">
-                    <h3 style="font-weight: bold; margin-bottom: 8px; color: #0F172A;">${incident.incident_type}</h3>
-                    <p style="margin-bottom: 4px; font-size: 13px;">${incident.description.substring(0, 100)}${incident.description.length > 100 ? '...' : ''}</p>
-                    <p style="margin-top: 8px; font-size: 12px; color: #64748B;">
-                        <strong>Status:</strong> <span style="color: ${incident.status === 'Pending' ? '#F59E0B' : '#10B981'};">${incident.status}</span><br>
-                        <strong>Date:</strong> ${new Date(incident.created_at).toLocaleDateString()}
-                    </p>
+                <div style="color: #111111; font-size: 0.875rem;">
+                    <strong>${incident.incident_type}</strong><br>
+                    ${incident.description.substring(0, 100)}<br>
+                    <span style="color: #737373; font-size: 0.75rem;">${new Date(incident.created_at).toLocaleDateString()}</span>
                 </div>
             `;
             marker.bindPopup(popupContent);
             markers.addLayer(marker);
         });
 
-        // Add marker cluster to map
         map.addLayer(markers);
         
-        // Add heatmap layer
         if (heatData.length > 0) {
             L.heatLayer(heatData, {
                 radius: 25,
@@ -434,9 +490,9 @@ fetch('/api/incidents')
                 maxZoom: 17,
                 max: 1.0,
                 gradient: {
-                    0.0: '#A5B4FC',
-                    0.5: '#6366F1',
-                    1.0: '#4F46E5'
+                    0.0: 'transparent',
+                    0.5: '#E5E5E5',
+                    1.0: '#737373'
                 }
             }).addTo(map);
         }
@@ -449,9 +505,10 @@ fetch('/api/incidents')
     })
     .catch(error => console.error('Error loading incident data:', error));
 
-// Chart.js Configuration
-Chart.defaults.color = '#64748B';
-Chart.defaults.borderColor = '#E2E8F0';
+// Chart.js Configuration - Swiss Minimal Style
+Chart.defaults.color = '#111111';
+Chart.defaults.borderColor = '#E5E5E5';
+Chart.defaults.font.family = 'Inter';
 
 // Bar Chart - Incidents by Category
 const categoryData = {{ incidents_by_category | tojson }};
@@ -464,54 +521,72 @@ new Chart(categoryCtx, {
     data: {
         labels: categoryLabels.length > 0 ? categoryLabels : ['No Data'],
         datasets: [{
-            label: 'Number of Incidents',
+            label: 'Incidents',
             data: categoryCounts.length > 0 ? categoryCounts : [0],
-            backgroundColor: [
-                'rgba(99, 102, 241, 0.8)',
-                'rgba(99, 102, 241, 0.7)',
-                'rgba(99, 102, 241, 0.6)',
-                'rgba(99, 102, 241, 0.5)',
-                'rgba(99, 102, 241, 0.4)',
-                'rgba(99, 102, 241, 0.3)',
-                'rgba(99, 102, 241, 0.2)'
-            ],
-            borderColor: [
-                'rgba(99, 102, 241, 1)',
-                'rgba(99, 102, 241, 1)',
-                'rgba(99, 102, 241, 1)',
-                'rgba(99, 102, 241, 1)',
-                'rgba(99, 102, 241, 1)',
-                'rgba(99, 102, 241, 1)',
-                'rgba(99, 102, 241, 1)'
-            ],
-            borderWidth: 1
+            backgroundColor: 'transparent',
+            borderColor: '#111111',
+            borderWidth: 2
         }]
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
         animation: {
-            duration: 750,
-            easing: 'easeInOutQuart'
+            duration: 0
         },
         plugins: {
             legend: {
                 display: false
+            },
+            tooltip: {
+                backgroundColor: '#111111',
+                titleColor: '#FFFFFF',
+                bodyColor: '#FFFFFF',
+                borderColor: '#111111',
+                borderWidth: 1,
+                padding: 12,
+                displayColors: false,
+                titleFont: {
+                    size: 12,
+                    weight: '700'
+                },
+                bodyFont: {
+                    size: 11,
+                    weight: '400'
+                }
             }
         },
         scales: {
             y: {
                 beginAtZero: true,
                 ticks: {
-                    stepSize: 1
+                    stepSize: 1,
+                    color: '#737373',
+                    font: {
+                        size: 11
+                    }
                 },
                 grid: {
-                    color: '#E2E8F0'
+                    display: false
+                },
+                border: {
+                    display: false
                 }
             },
             x: {
+                ticks: {
+                    color: '#111111',
+                    font: {
+                        size: 11,
+                        weight: '600'
+                    }
+                },
                 grid: {
                     display: false
+                },
+                border: {
+                    color: '#111111',
+                    width: 1
                 }
             }
         }
@@ -532,45 +607,76 @@ new Chart(timelineCtx, {
     data: {
         labels: timelineLabels.length > 0 ? timelineLabels : ['No Data'],
         datasets: [{
-            label: 'Incidents Reported',
+            label: 'Incidents',
             data: timelineCounts.length > 0 ? timelineCounts : [0],
-            borderColor: 'rgba(99, 102, 241, 1)',
-            backgroundColor: 'rgba(99, 102, 241, 0.05)',
+            borderColor: '#111111',
+            backgroundColor: 'transparent',
             borderWidth: 2,
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: 'rgba(99, 102, 241, 1)',
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6
+            fill: false,
+            tension: 0,
+            pointRadius: 0,
+            pointHoverRadius: 0
         }]
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
         animation: {
-            duration: 750,
-            easing: 'easeInOutQuart'
+            duration: 0
         },
         plugins: {
             legend: {
                 display: false
+            },
+            tooltip: {
+                backgroundColor: '#111111',
+                titleColor: '#FFFFFF',
+                bodyColor: '#FFFFFF',
+                borderColor: '#111111',
+                borderWidth: 1,
+                padding: 12,
+                displayColors: false,
+                titleFont: {
+                    size: 12,
+                    weight: '700'
+                },
+                bodyFont: {
+                    size: 11,
+                    weight: '400'
+                }
             }
         },
         scales: {
             y: {
                 beginAtZero: true,
                 ticks: {
-                    stepSize: 1
+                    stepSize: 1,
+                    color: '#737373',
+                    font: {
+                        size: 11
+                    }
                 },
                 grid: {
-                    color: '#E2E8F0'
+                    display: false
+                },
+                border: {
+                    display: false
                 }
             },
             x: {
+                ticks: {
+                    color: '#111111',
+                    font: {
+                        size: 11,
+                        weight: '600'
+                    }
+                },
                 grid: {
                     display: false
+                },
+                border: {
+                    color: '#111111',
+                    width: 1
                 }
             }
         }
@@ -619,7 +725,7 @@ function sendSOS() {
     statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i><span class="text-yellow-400">Getting location...</span>';
     
     if (!navigator.geolocation) {
-        statusDiv.innerHTML = '<span class="text-red-400">⚠️ Geolocation not supported</span>';
+        statusDiv.innerHTML = '<span class="text-red-400"><i class="fas fa-exclamation-triangle"></i> Geolocation not supported</span>';
         return;
     }
     

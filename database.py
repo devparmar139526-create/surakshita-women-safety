@@ -31,9 +31,7 @@ def init_db():
             is_sos BOOLEAN DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users (id),
-            CHECK (status IN ('Pending', 'Resolved', 'High Alert')),
-            CHECK (priority IN ('Normal', 'High', 'Critical'))
+            FOREIGN KEY (user_id) REFERENCES users (id)
         )
     ''')
     

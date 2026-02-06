@@ -3,103 +3,342 @@
 {% block title %}Incidents - Surakshita{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<style>
+    /* Swiss International Incidents Page */
+    .incidents-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+    }
+    
+    /* Header */
+    .incidents-header {
+        margin-bottom: 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    
+    .incidents-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #111111;
+        margin: 0;
+    }
+    
+    .incidents-subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        color: #737373;
+        margin-top: 0.5rem;
+    }
+    
+    /* Filter Tabs - Black/White Only */
+    .filter-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .filter-tab {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 10px 24px;
+        text-decoration: none;
+        border: 1px solid #111111;
+        transition: all 0.2s ease;
+    }
+    
+    .filter-tab.active {
+        background: #111111;
+        color: #FFFFFF;
+    }
+    
+    .filter-tab.inactive {
+        background: #FFFFFF;
+        color: #111111;
+    }
+    
+    .filter-tab.inactive:hover {
+        opacity: 0.7;
+    }
+    
+    /* Incident Cards */
+    .incident-card {
+        background: #FFFFFF;
+        border: 1px solid #E5E5E5;
+        padding: 2rem;
+        margin-bottom: 1rem;
+        transition: border-color 0.2s ease;
+    }
+    
+    .incident-card:hover {
+        border-color: #111111;
+    }
+    
+    .incident-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    
+    .incident-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #111111;
+        margin: 0;
+    }
+    
+    .incident-description {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        color: #737373;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+    
+    .incident-meta {
+        display: flex;
+        gap: 2rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        color: #737373;
+        margin-bottom: 1.5rem;
+    }
+    
+    .incident-meta i {
+        margin-right: 0.5rem;
+        color: #111111;
+    }
+    
+    /* Status Badges - Strict Borders, No Fills */
+    .status-badge {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 6px 12px;
+        border: 1px solid;
+        background: #FFFFFF;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .status-badge.pending {
+        color: #DC2626;
+        border-color: #DC2626;
+    }
+    
+    .status-badge.resolved {
+        color: #111111;
+        border-color: #111111;
+    }
+    
+    /* Action Buttons */
+    .incident-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        min-width: 160px;
+    }
+    
+    .action-btn {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 10px 20px;
+        border: 1px solid;
+        background: #FFFFFF;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+    }
+    
+    .action-btn.resolve {
+        color: #111111;
+        border-color: #111111;
+    }
+    
+    .action-btn.resolve:hover {
+        background: #111111;
+        color: #FFFFFF;
+    }
+    
+    .action-btn.pending {
+        color: #737373;
+        border-color: #E5E5E5;
+    }
+    
+    .action-btn.pending:hover {
+        border-color: #111111;
+        color: #111111;
+    }
+    
+    .action-btn.delete {
+        color: #DC2626;
+        border-color: #DC2626;
+    }
+    
+    .action-btn.delete:hover {
+        background: #DC2626;
+        color: #FFFFFF;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        background: #FFFFFF;
+        border: 1px solid #E5E5E5;
+        padding: 4rem 2rem;
+        text-align: center;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: #E5E5E5;
+        margin-bottom: 1.5rem;
+    }
+    
+    .empty-state h3 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #111111;
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-state p {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        color: #737373;
+        margin-bottom: 2rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .incidents-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .incident-card {
+            padding: 1.5rem;
+        }
+        
+        .incident-actions {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .filter-tabs {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+
+<div class="incidents-container">
     <!-- Header -->
-    <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
+    <div class="incidents-header">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">All Incidents</h1>
-            <p class="mt-2 text-gray-600">Manage and track your reported incidents</p>
+            <h1 class="incidents-title">All Incidents</h1>
+            <p class="incidents-subtitle">Manage and track your reported incidents</p>
         </div>
-        <a href="{{ url_for('new_incident') }}" class="mt-4 md:mt-0 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white gradient-bg hover:opacity-90">
-            <i class="fas fa-plus mr-2"></i>
+        <a href="{{ url_for('new_incident') }}" class="btn-swiss">
             New Incident
         </a>
     </div>
 
-    <!-- Filters -->
-    <div class="mb-6 flex space-x-2">
+    <!-- Filter Tabs - Black/White Theme -->
+    <div class="filter-tabs">
         <a href="{{ url_for('incidents', status='all') }}" 
-           class="px-4 py-2 rounded-md text-sm font-medium {% if current_filter == 'all' %}bg-purple-600 text-white{% else %}bg-white text-gray-700 hover:bg-gray-50{% endif %}">
+           class="filter-tab {% if current_filter == 'all' %}active{% else %}inactive{% endif %}">
             All
         </a>
         <a href="{{ url_for('incidents', status='pending') }}" 
-           class="px-4 py-2 rounded-md text-sm font-medium {% if current_filter == 'pending' %}bg-purple-600 text-white{% else %}bg-white text-gray-700 hover:bg-gray-50{% endif %}">
+           class="filter-tab {% if current_filter == 'pending' %}active{% else %}inactive{% endif %}">
             Pending
         </a>
         <a href="{{ url_for('incidents', status='resolved') }}" 
-           class="px-4 py-2 rounded-md text-sm font-medium {% if current_filter == 'resolved' %}bg-purple-600 text-white{% else %}bg-white text-gray-700 hover:bg-gray-50{% endif %}">
+           class="filter-tab {% if current_filter == 'resolved' %}active{% else %}inactive{% endif %}">
             Resolved
         </a>
     </div>
 
     <!-- Incidents List -->
     {% if incidents %}
-    <div class="grid grid-cols-1 gap-6">
+    <div>
         {% for incident in incidents %}
-        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
-            <div class="flex flex-col md:flex-row justify-between items-start">
-                <div class="flex-1">
-                    <div class="flex items-start justify-between mb-2">
-                        <h3 class="text-lg font-semibold text-gray-900">{{ incident.incident_type }}</h3>
-                        {% if incident.status == 'Pending' %}
-                        <span class="ml-2 px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                            <i class="fas fa-clock mr-1"></i> Pending
-                        </span>
-                        {% else %}
-                        <span class="ml-2 px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                            <i class="fas fa-check-circle mr-1"></i> Resolved
-                        </span>
-                        {% endif %}
-                    </div>
-                    <p class="text-gray-700 mb-3">{{ incident.description }}</p>
-                    <div class="flex flex-wrap gap-4 text-sm text-gray-600">
-                        <div>
-                            <i class="fas fa-map-marker-alt mr-1 text-purple-600"></i>
-                            <span>{{ "%.6f"|format(incident.latitude) }}, {{ "%.6f"|format(incident.longitude) }}</span>
-                        </div>
-                        <div>
-                            <i class="fas fa-calendar mr-1 text-purple-600"></i>
-                            <span>{{ incident.created_at[:16] }}</span>
-                        </div>
-                    </div>
+        <div class="incident-card">
+            <div class="incident-header">
+                <h3 class="incident-title">{{ incident.incident_type }}</h3>
+                {% if incident.status == 'Pending' %}
+                <span class="status-badge pending">
+                    <i class="fas fa-clock"></i> Pending
+                </span>
+                {% else %}
+                <span class="status-badge resolved">
+                    <i class="fas fa-check-circle"></i> Resolved
+                </span>
+                {% endif %}
+            </div>
+            
+            <p class="incident-description">{{ incident.description }}</p>
+            
+            <div class="incident-meta">
+                <div>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ "%.6f"|format(incident.latitude) }}, {{ "%.6f"|format(incident.longitude) }}</span>
                 </div>
-                <div class="mt-4 md:mt-0 md:ml-6 flex flex-col space-y-2">
-                    {% if incident.status == 'Pending' %}
-                    <form action="{{ url_for('update_incident_status', incident_id=incident.id) }}" method="POST" class="inline">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                        <input type="hidden" name="status" value="Resolved">
-                        <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium">
-                            <i class="fas fa-check mr-1"></i> Mark Resolved
-                        </button>
-                    </form>
-                    {% else %}
-                    <form action="{{ url_for('update_incident_status', incident_id=incident.id) }}" method="POST" class="inline">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                        <input type="hidden" name="status" value="Pending">
-                        <button type="submit" class="w-full px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 text-sm font-medium">
-                            <i class="fas fa-undo mr-1"></i> Mark Pending
-                        </button>
-                    </form>
-                    {% endif %}
-                    <form action="{{ url_for('delete_incident', incident_id=incident.id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this incident?');">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                        <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium">
-                            <i class="fas fa-trash mr-1"></i> Delete
-                        </button>
-                    </form>
+                <div>
+                    <i class="fas fa-calendar"></i>
+                    <span>{{ incident.created_at[:16] }}</span>
                 </div>
+            </div>
+            
+            <div class="incident-actions">
+                {% if incident.status == 'Pending' %}
+                <form action="{{ url_for('update_incident_status', incident_id=incident.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <input type="hidden" name="status" value="Resolved">
+                    <button type="submit" class="action-btn resolve">
+                        <i class="fas fa-check"></i> Mark Resolved
+                    </button>
+                </form>
+                {% else %}
+                <form action="{{ url_for('update_incident_status', incident_id=incident.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <input type="hidden" name="status" value="Pending">
+                    <button type="submit" class="action-btn pending">
+                        <i class="fas fa-undo"></i> Mark Pending
+                    </button>
+                </form>
+                {% endif %}
+                <form action="{{ url_for('delete_incident', incident_id=incident.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this incident?');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="action-btn delete">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
             </div>
         </div>
         {% endfor %}
     </div>
     {% else %}
-    <div class="bg-white rounded-lg shadow-md p-12 text-center">
-        <i class="fas fa-inbox text-gray-400 text-6xl mb-4"></i>
-        <h3 class="text-xl font-semibold text-gray-900 mb-2">No incidents found</h3>
-        <p class="text-gray-500 mb-6">{% if current_filter != 'all' %}Try changing the filter or {% endif %}report your first incident</p>
-        <a href="{{ url_for('new_incident') }}" class="inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white gradient-bg hover:opacity-90">
-            <i class="fas fa-plus mr-2"></i>
-            Report Incident
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>No incidents found</h3>
+        <p>{% if current_filter != 'all' %}Try changing the filter or {% endif %}report your first incident</p>
+        <a href="{{ url_for('new_incident') }}" class="btn-swiss">
+            <i class="fas fa-plus"></i> Report Incident
         </a>
     </div>
     {% endif %}

@@ -4,46 +4,717 @@
 
 {% block content %}
 <style>
+    /* Swiss International Admin Dashboard */
     body {
-        background-color: #F8FAFC;
+        background-color: #FFFFFF;
+    }
+    
+    .admin-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+    }
+    
+    /* Header */
+    .admin-header {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 2.5rem;
+        color: #000000;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 0.5rem;
+    }
+    
+    .admin-subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        color: #737373;
+        margin-bottom: 3rem;
+    }
+    
+    /* Stats Row */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+    
+    .stat-box {
+        background: #FFFFFF;
+        border: 1px solid #000000;
+        padding: 2rem;
+        transition: border-width 0.2s ease;
+    }
+    
+    .stat-box:hover {
+        border-width: 2px;
+    }
+    
+    .stat-label {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #737373;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-value {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 900;
+        font-size: 3rem;
+        color: #000000;
+        line-height: 1;
+    }
+    
+    .stat-value.critical {
+        color: #DC2626;
+    }
+    
+    /* Section Title */
+    .section-title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #000000;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #000000;
+    }
+    
+    /* Alert Cards */
+    .alerts-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
     }
     
     .alert-card {
         background: #FFFFFF;
-        border-left: 4px solid;
-        border-top: 1px solid #E2E8F0;
-        border-right: 1px solid #E2E8F0;
-        border-bottom: 1px solid #E2E8F0;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-        transition: all 0.2s ease;
+        border: 1px solid #E5E5E5;
+        padding: 1.5rem;
+        transition: border-color 0.2s ease;
     }
     
     .alert-card:hover {
-        transform: translateX(4px);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border-color: #000000;
     }
     
-    .critical-alert {
-        border-left-color: #EF4444;
-        animation: pulse-alert-minimal 2.5s infinite;
+    .alert-card.critical-alert {
+        border-left: 4px solid #DC2626;
     }
     
-    @keyframes pulse-alert-minimal {
-        0%, 100% {
-            box-shadow: 0 1px 3px 0 rgba(239, 68, 68, 0.2);
+    .alert-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #E5E5E5;
+    }
+    
+    .alert-info {
+        flex: 1;
+    }
+    
+    .alert-type {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 1.125rem;
+        color: #000000;
+        margin-bottom: 0.5rem;
+    }
+    
+    .alert-meta {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        color: #737373;
+        display: flex;
+        gap: 1.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .alert-body {
+        margin-bottom: 1rem;
+    }
+    
+    .alert-description {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        color: #404040;
+        line-height: 1.6;
+    }
+    
+    .alert-location {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        color: #737373;
+        margin-top: 0.5rem;
+    }
+    
+    /* Status Badge */
+    .status-badge {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.5rem 1rem;
+        border: 1px solid #000000;
+        background: transparent;
+        color: #000000;
+    }
+    
+    .status-badge.status-critical {
+        border-color: #DC2626;
+        color: #DC2626;
+    }
+    
+    .status-badge.status-dispatched {
+        background: #000000;
+        color: #FFFFFF;
+    }
+    
+    /* Dispatch Console */
+    .dispatch-control {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #E5E5E5;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .dispatch-label {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #737373;
+    }
+    
+    .dispatch-select {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        padding: 0.625rem 1rem;
+        border: 1px solid #E5E5E5;
+        border-radius: 0;
+        background: #FFFFFF;
+        color: #000000;
+        min-width: 200px;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+    }
+    
+    .dispatch-select:focus {
+        outline: none;
+        border-color: #000000;
+    }
+    
+    .dispatch-select option {
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: #FAFAFA;
+        border: 1px solid #E5E5E5;
+    }
+    
+    .empty-state-icon {
+        font-size: 3rem;
+        color: #E5E5E5;
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        color: #737373;
+    }
+    
+    /* Priority Indicator */
+    .priority-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+    }
+    
+    .priority-high {
+        background: #DC2626;
+    }
+    
+    .priority-medium {
+        background: #F59E0B;
+    }
+    
+    .priority-low {
+        background: #16A34A;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .admin-header {
+            font-size: 2rem;
         }
-        50% {
-            box-shadow: 0 1px 3px 0 rgba(239, 68, 68, 0.2), 0 0 0 8px rgba(239, 68, 68, 0.1);
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+        }
+        
+        .alert-header {
+            flex-direction: column;
+        }
+        
+        .dispatch-control {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .dispatch-select {
+            min-width: 100%;
+        }
+    }
+</style>
+
+<div class="admin-container">
+    <!-- Header -->
+    <h1 class="admin-header">EMERGENCY MONITOR</h1>
+    <p class="admin-subtitle">Real-time incident tracking and emergency dispatch system</p>
+    
+    <!-- Stats Row -->
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-label">Total Alerts</div>
+            <div class="stat-value">{{ stats.total_alerts }}</div>
+        </div>
+        
+        <div class="stat-box">
+            <div class="stat-label">High Priority</div>
+            <div class="stat-value critical">{{ stats.high_priority }}</div>
+        </div>
+        
+        <div class="stat-box">
+            <div class="stat-label">Active Incidents</div>
+            <div class="stat-value">{{ stats.active }}</div>
+        </div>
+        
+        <div class="stat-box">
+            <div class="stat-label">Resolved Today</div>
+            <div class="stat-value">{{ stats.resolved }}</div>
+        </div>
+    </div>
+    
+    <!-- Alerts Section -->
+    <h2 class="section-title">Active Alerts</h2>
+    
+    <div class="alerts-container" id="alertsContainer">
+        {% if alerts and alerts|length > 0 %}
+            {% for alert in alerts %}
+            <div class="alert-card {% if alert.priority == 'High' or alert.is_sos %}critical-alert{% endif %}" 
+                 data-alert-id="{{ alert.id }}">
+                
+                <!-- Alert Header -->
+                <div class="alert-header">
+                    <div class="alert-info">
+                        <h3 class="alert-type">
+                            <span class="priority-dot priority-{{ alert.priority|lower }}"></span>
+                            {{ alert.incident_type }}
+                            {% if alert.is_sos %}
+                            <i class="fas fa-exclamation-triangle" style="color: #DC2626; margin-left: 0.5rem;"></i>
+                            {% endif %}
+                        </h3>
+                        
+                        <div class="alert-meta">
+                            <span><i class="far fa-clock"></i> {{ alert.created_at }}</span>
+                            <span><i class="far fa-user"></i> {{ alert.username }}</span>
+                            <span><i class="fas fa-map-marker-alt"></i> {{ alert.location }}</span>
+                        </div>
+                    </div>
+                    
+                    <span class="status-badge {% if alert.priority == 'High' or alert.is_sos %}status-critical{% endif %} {% if 'Dispatched' in alert.status %}status-dispatched{% endif %}" 
+                          id="status-badge-{{ alert.id }}">
+                        {{ alert.status }}
+                    </span>
+                </div>
+                
+                <!-- Alert Body -->
+                <div class="alert-body">
+                    <p class="alert-description">{{ alert.description }}</p>
+                    {% if alert.latitude and alert.longitude %}
+                    <p class="alert-location">
+                        <i class="fas fa-map-pin"></i> 
+                        Coordinates: {{ alert.latitude }}, {{ alert.longitude }}
+                    </p>
+                    {% endif %}
+                </div>
+                
+                <!-- Dispatch Console -->
+                {% if 'Dispatched' not in alert.status %}
+                <div class="dispatch-control">
+                    <span class="dispatch-label">Dispatch Console:</span>
+                    <select class="dispatch-select" id="dispatch-select-{{ alert.id }}">
+                        <option value="">Select Unit</option>
+                        <option value="police">Police Patrol</option>
+                        <option value="ambulance">Ambulance</option>
+                        <option value="fire">Fire Brigade</option>
+                        <option value="swat">SWAT Team</option>
+                    </select>
+                    <button class="btn-swiss" onclick="dispatchUnit({{ alert.id }})">
+                        DISPATCH
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <p class="empty-state-text">No active alerts at this time</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Global state for tracking known incidents
+const knownIncidents = new Map();
+
+// Initialize incident tracking on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const alertCards = document.querySelectorAll('.alert-card');
+    alertCards.forEach(card => {
+        const alertId = card.getAttribute('data-alert-id');
+        const statusBadge = document.getElementById('status-badge-' + alertId);
+        if (statusBadge) {
+            knownIncidents.set(parseInt(alertId), statusBadge.textContent.trim());
+        }
+    });
+    
+    // Start polling
+    pollForNewAlerts();
+});
+
+// Dispatch Unit Function
+function dispatchUnit(incidentId) {
+    const selectElement = document.getElementById('dispatch-select-' + incidentId);
+    const unitType = selectElement.value;
+    
+    if (!unitType) {
+        alert('Please select a unit type before dispatching.');
+        return;
+    }
+    
+    // Show loading state
+    const button = event.target;
+    const originalText = button.textContent;
+    button.textContent = 'DISPATCHING...';
+    button.disabled = true;
+    
+    // Send dispatch request
+    fetch('/api/dispatch', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            alert_id: incidentId,
+            unit_type: unitType
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update status badge
+            updateStatusBadge(incidentId, data.status);
+            
+            // Remove dispatch control
+            const dispatchControl = document.querySelector(`[data-alert-id="${incidentId}"] .dispatch-control`);
+            if (dispatchControl) {
+                dispatchControl.remove();
+            }
+            
+            // Show success notification
+            showNotification('Unit dispatched successfully!', 'success');
+        } else {
+            alert('Dispatch Failed: ' + (data.message || 'Unknown error'));
+            button.textContent = originalText;
+            button.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Dispatch Error:', error);
+        alert('Dispatch Failed: Network error');
+        button.textContent = originalText;
+        button.disabled = false;
+    });
+}
+
+// Update Status Badge
+function updateStatusBadge(incidentId, newStatus) {
+    const badge = document.getElementById('status-badge-' + incidentId);
+    if (badge) {
+        badge.textContent = newStatus;
+        badge.classList.remove('status-critical');
+        badge.classList.add('status-dispatched');
+        
+        // Update known incidents map
+        knownIncidents.set(incidentId, newStatus);
+    }
+}
+
+// Poll for New Alerts
+function pollForNewAlerts() {
+    fetch('/api/admin/poll/alerts')
+        .then(response => response.json())
+        .then(data => {
+            if (data.alerts && data.alerts.length > 0) {
+                data.alerts.forEach(alert => {
+                    const knownStatus = knownIncidents.get(alert.id);
+                    
+                    // Check if status changed
+                    if (knownStatus && knownStatus !== alert.status) {
+                        updateStatusBadge(alert.id, alert.status);
+                        
+                        // Remove dispatch control if now dispatched
+                        if (alert.status.includes('Dispatched')) {
+                            const dispatchControl = document.querySelector(`[data-alert-id="${alert.id}"] .dispatch-control`);
+                            if (dispatchControl) {
+                                dispatchControl.remove();
+                            }
+                        }
+                    }
+                    
+                    // Add new incidents to tracking
+                    if (!knownIncidents.has(alert.id)) {
+                        knownIncidents.set(alert.id, alert.status);
+                        // Could reload page or dynamically add card here
+                    }
+                });
+            }
+        })
+        .catch(error => console.error('Polling error:', error))
+        .finally(() => {
+            // Poll every 5 seconds
+            setTimeout(pollForNewAlerts, 5000);
+        });
+}
+
+// Show Notification (Optional enhancement)
+function showNotification(message, type = 'info') {
+    // Simple console log for now - could be enhanced with toast notifications
+    console.log(`[${type.toUpperCase()}] ${message}`);
+}
+</script>
+
+{% endblock %}
+            border-left-color: #FFFFFF;
         }
     }
     
-    .stat-badge {
-        background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
-        border-left: 4px solid;
-        border-top: 1px solid #E2E8F0;
-        border-right: 1px solid #E2E8F0;
-        border-bottom: 1px solid #E2E8F0;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    .resolved-card {
+        border-left: 4px solid #111111;
+    }
+    
+    .alert-title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 1.125rem;
+        color: #111111;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .alert-description {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        color: #737373;
+        line-height: 1.6;
+    }
+    
+    .alert-meta {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        color: #737373;
+    }
+    
+    /* Dispatch Control Section */
+    .dispatch-control {
+        background: #FFFFFF;
+        border: 1px solid #E5E5E5;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .dispatch-title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #111111;
+        margin-bottom: 0.75rem;
+    }
+    
+    .dispatch-select {
+        width: 100%;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        padding: 0.75rem;
+        border: 1px solid #E5E5E5;
+        background: #FFFFFF;
+        color: #111111;
+        margin-bottom: 0.75rem;
+        transition: border-color 0.2s ease;
+    }
+    
+    .dispatch-select:focus {
+        outline: none;
+        border-color: #111111;
+    }
+    
+    /* Tabs - Swiss Clean */
+    .tab-button {
+        padding: 0.75rem 1.5rem;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #737373;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .tab-button:hover {
+        color: #111111;
+    }
+    
+    .tab-button.active {
+        color: #111111;
+        border-bottom-color: #111111;
+    }
+    
+    .tab-content {
+        display: none;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    /* Status Badges */
+    .status-badge {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.25rem 0.75rem;
+        border: 1px solid;
+        display: inline-block;
+    }
+    
+    .status-active {
+        background: #FFFFFF;
+        border-color: #DC2626;
+        color: #DC2626;
+    }
+    
+    .status-resolved {
+        background: #FFFFFF;
+        border-color: #111111;
+        color: #111111;
+    }
+    
+    .status-dispatched {
+        background: #111111;
+        border-color: #111111;
+        color: #FFFFFF;
+    }
+    
+    .badge-count {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border: 1px solid #111111;
+        background: #FFFFFF;
+        color: #111111;
+        display: inline-block;
+    }
+    
+    .badge-count-red {
+        border-color: #DC2626;
+        color: #DC2626;
+    }
+    
+    /* Map Link - Minimal Text */
+    .map-link {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #111111;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        transition: opacity 0.2s ease;
+    }
+    
+    .map-link:hover {
+        opacity: 0.7;
+    }
+    
+    .map-link i {
+        margin-left: 0.5rem;
+    }
+    
+    /* Empty State */
+    .empty-state-icon {
+        color: #E5E5E5;
+        font-size: 4rem;
+    }
+    
+    .empty-state-title {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: #111111;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .empty-state-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        color: #737373;
+    }
+    
+    /* Container */
+    .admin-container {
+        background: #FFFFFF;
+        border: 1px solid #111111;
+        padding: 1.5rem;
     }
 </style>
 
@@ -51,127 +722,154 @@
     <!-- Header -->
     <div class="mb-8 flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-slate-900 flex items-center">
-                <i class="fas fa-shield-alt mr-3 text-red-500"></i>
-                Admin Dashboard - High Alert Monitor
+            <h1 class="admin-header flex items-center">
+                <i class="fas fa-shield-alt mr-3" style="color: #DC2626;"></i>
+                EMERGENCY MONITOR
             </h1>
-            <p class="mt-2 text-slate-500">Real-time monitoring of critical SOS alerts</p>
+            <p class="admin-subtitle">Real-time critical SOS alert management system</p>
         </div>
         <div class="text-right">
-            <div class="text-sm text-slate-600">Last Updated: <span id="adminLastUpdate">Just now</span></div>
-            <div class="text-xs text-slate-500 mt-1">Auto-refresh: <span class="text-emerald-500">●</span> Active (5s)</div>
+            <div class="admin-subtitle">Last Updated: <span id="adminLastUpdate">Just now</span></div>
+            <div class="admin-subtitle mt-1">Auto-refresh: <span style="color: #111111;">●</span> Active (5s)</div>
         </div>
     </div>
 
     <!-- Statistics -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="stat-badge rounded-lg p-6 border-red-500">
+        <div class="stat-box">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-400 uppercase">Total SOS Alerts</p>
-                    <p class="text-4xl font-bold text-white mt-2">{{ stats.total_alerts or 0 }}</p>
+                    <p class="stat-label">Total Alerts</p>
+                    <p class="stat-value">{{ stats.total_alerts or 0 }}</p>
                 </div>
-                <div class="bg-red-500 bg-opacity-20 rounded-full p-4">
-                    <i class="fas fa-exclamation-triangle text-red-400 text-3xl"></i>
+                <div>
+                    <i class="fas fa-exclamation-triangle stat-icon"></i>
                 </div>
             </div>
         </div>
 
-        <div class="stat-badge rounded-lg p-6 border-yellow-500">
+        <div class="stat-box">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-400 uppercase">Active Alerts</p>
-                    <p class="text-4xl font-bold text-white mt-2" id="activeAlertsCount">{{ stats.active_alerts or 0 }}</p>
+                    <p class="stat-label">Critical Active</p>
+                    <p class="stat-value critical" id="activeAlertsCount">{{ stats.active_alerts or 0 }}</p>
                 </div>
-                <div class="bg-yellow-500 bg-opacity-20 rounded-full p-4">
-                    <i class="fas fa-bell text-yellow-400 text-3xl"></i>
+                <div>
+                    <i class="fas fa-bell stat-icon"></i>
                 </div>
             </div>
         </div>
 
-        <div class="stat-badge rounded-lg p-6 border-green-500">
+        <div class="stat-box">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-400 uppercase">Resolved</p>
-                    <p class="text-4xl font-bold text-white mt-2">{{ stats.resolved_alerts or 0 }}</p>
+                    <p class="stat-label">Resolved</p>
+                    <p class="stat-value">{{ stats.resolved_alerts or 0 }}</p>
                 </div>
-                <div class="bg-green-500 bg-opacity-20 rounded-full p-4">
-                    <i class="fas fa-check-circle text-green-400 text-3xl"></i>
+                <div>
+                    <i class="fas fa-check-double stat-icon"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- High Alert Incidents -->
-    <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg shadow-2xl overflow-hidden border border-red-900">
-        <div class="px-6 py-4 bg-red-900 bg-opacity-30 border-b border-red-800 flex justify-between items-center">
-            <h2 class="text-xl font-semibold text-white flex items-center">
-                <i class="fas fa-siren mr-2 text-red-400"></i>
-                Critical SOS Alerts
-            </h2>
-            <button onclick="location.reload()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm transition">
-                <i class="fas fa-sync-alt mr-2"></i>Refresh Now
+    <!-- Tabbed Interface -->
+    <div class="admin-container">
+        <!-- Tab Buttons -->
+        <div class="flex" style="border-bottom: 1px solid #E5E5E5;">
+            <button onclick="switchTab('active')" id="activeTab" class="tab-button active flex-1 text-left">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                Active Alerts
+                <span class="ml-2 badge-count badge-count-red">{{ stats.active_alerts or 0 }}</span>
+            </button>
+            <button onclick="switchTab('resolved')" id="resolvedTab" class="tab-button flex-1 text-left" style="border-left: 1px solid #E5E5E5;">
+                <i class="fas fa-check-double mr-2"></i>
+                Resolved Archives
+                <span class="ml-2 badge-count">{{ stats.resolved_alerts or 0 }}</span>
             </button>
         </div>
         
-        <div id="alertsContainer" class="p-6">
-            {% if high_alerts %}
-                <div class="space-y-4">
-                    {% for alert in high_alerts %}
-                    <div class="alert-card rounded-lg p-6 {% if alert.status == 'High Alert' %}critical-alert{% else %}border-gray-600{% endif %}" data-alert-id="{{ alert.id }}">
-                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <!-- Active Alerts Content -->
+        <div id="active-content" class="tab-content active" style="padding: 1.5rem;">
+            <div class="mb-4 flex justify-between items-center">
+                <h2 class="section-title flex items-center">
+                    <i class="fas fa-bell mr-2"></i>
+                    Critical Incidents
+                </h2>
+                <button onclick="location.reload()" class="btn-swiss" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                    <i class="fas fa-sync-alt mr-2"></i>Refresh Now
+                </button>
+            </div>
+            
+            {% if active_alerts %}
+                <div class="space-y-4" id="activeAlertsContainer">
+                    {% for alert in active_alerts %}
+                    <div class="alert-card critical-alert" data-alert-id="{{ alert.id }}">
+                        <div class="flex flex-col lg:flex-row justify-between items-start gap-4">
                             <div class="flex-1">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <span class="px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full">
-                                        <i class="fas fa-exclamation-circle mr-1"></i>SOS
+                                    <span class="status-badge status-active">
+                                        <i class="fas fa-exclamation-circle mr-1"></i>ACTIVE
                                     </span>
-                                    <h3 class="text-xl font-bold text-white">{{ alert.incident_type }}</h3>
-                                    {% if alert.status == 'High Alert' %}
-                                    <span class="px-3 py-1 bg-red-500 bg-opacity-30 text-red-300 text-xs font-semibold rounded-full border border-red-500 animate-pulse">
-                                        ACTIVE ALERT
-                                    </span>
-                                    {% endif %}
+                                    <h3 class="alert-title">{{ alert.incident_type }}</h3>
                                 </div>
                                 
-                                <p class="text-gray-300 mb-4">{{ alert.description }}</p>
+                                <p class="alert-description mb-4">{{ alert.description }}</p>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                                    <div class="flex items-center text-gray-400">
-                                        <i class="fas fa-user mr-2 text-purple-400"></i>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 alert-meta">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-user mr-2" style="color: #111111;"></i>
                                         <span><strong>User:</strong> {{ alert.username }} ({{ alert.email }})</span>
                                     </div>
-                                    <div class="flex items-center text-gray-400">
-                                        <i class="fas fa-clock mr-2 text-blue-400"></i>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-clock mr-2" style="color: #111111;"></i>
                                         <span><strong>Time:</strong> {{ alert.created_at }}</span>
                                     </div>
-                                    <div class="flex items-center text-gray-400">
-                                        <i class="fas fa-map-marker-alt mr-2 text-red-400"></i>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-map-marker-alt mr-2" style="color: #DC2626;"></i>
                                         <span><strong>Location:</strong> {{ "%.4f"|format(alert.latitude) }}, {{ "%.4f"|format(alert.longitude) }}</span>
                                     </div>
-                                    <div class="flex items-center text-gray-400">
-                                        <i class="fas fa-exclamation-triangle mr-2 text-yellow-400"></i>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-exclamation-triangle mr-2" style="color: #111111;"></i>
                                         <span><strong>Priority:</strong> {{ alert.priority or 'Critical' }}</span>
                                     </div>
+                                </div>
+                                
+                                <!-- Dispatch Control Section -->
+                                <div class="dispatch-control">
+                                    <h4 class="dispatch-title">
+                                        <i class="fas fa-truck mr-2"></i>
+                                        Dispatch Control
+                                    </h4>
+                                    <select class="dispatch-select" id="dispatchUnit{{ alert.id }}">
+                                        <option value="">Select Unit</option>
+                                        <option value="police">Police Patrol</option>
+                                        <option value="ambulance">Ambulance</option>
+                                        <option value="fire">Fire Brigade</option>
+                                        <option value="swat">SWAT Team</option>
+                                    </select>
+                                    <button onclick="dispatchUnit({{ alert.id }})" class="btn-swiss w-full" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                                        <i class="fas fa-paper-plane mr-2"></i>DISPATCH NOW
+                                    </button>
                                 </div>
                             </div>
                             
                             <div class="flex flex-col gap-2 min-w-[200px]">
                                 <a href="https://www.google.com/maps?q={{ "%.4f"|format(alert.latitude) }},{{ "%.4f"|format(alert.longitude) }}" target="_blank" 
-                                   class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium text-center transition">
-                                    <i class="fas fa-map-marked-alt mr-2"></i>View on Map
+                                   class="map-link">
+                                    View on Map
+                                    <i class="fas fa-arrow-right"></i>
                                 </a>
-                                <a href="tel:911" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium text-center transition">
-                                    <i class="fas fa-phone mr-2"></i>Call Emergency
+                                <a href="tel:911" class="btn-swiss btn-danger" style="padding: 0.5rem 1rem; font-size: 0.875rem; text-align: center;">
+                                    <i class="fas fa-phone mr-2"></i>CALL EMERGENCY
                                 </a>
-                                {% if alert.status == 'High Alert' %}
                                 <form action="{{ url_for('update_incident_status', incident_id=alert.id) }}" method="POST" class="inline">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                     <input type="hidden" name="status" value="Resolved">
-                                    <button type="submit" class="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition">
-                                        <i class="fas fa-check mr-2"></i>Mark Resolved
+                                    <button type="submit" class="btn-swiss w-full" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                                        <i class="fas fa-check mr-2"></i>MARK RESOLVED
                                     </button>
                                 </form>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -179,47 +877,273 @@
                 </div>
             {% else %}
                 <div class="text-center py-12">
-                    <i class="fas fa-shield-alt text-gray-600 text-6xl mb-4"></i>
-                    <h3 class="text-xl font-semibold text-gray-400 mb-2">No Active Alerts</h3>
-                    <p class="text-gray-500">All clear - No critical SOS alerts at this time</p>
+                    <i class="fas fa-shield-alt empty-state-icon mb-4"></i>
+                    <h3 class="empty-state-title mb-2">No Active Alerts</h3>
+                    <p class="empty-state-text">All clear - No critical incidents at this time</p>
+                </div>
+            {% endif %}
+                                        <span><strong>Priority:</strong> {{ alert.priority or 'Critical' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-col gap-2 min-w-[200px]">
+                                <a href="https://www.google.com/maps?q={{ "%.4f"|format(alert.latitude) }},{{ "%.4f"|format(alert.longitude) }}" target="_blank" 
+                                   class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium text-center transition">
+                                    <i class="fas fa-location-dot mr-2"></i>View on Map
+                                </a>
+                                <a href="tel:911" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium text-center transition">
+                                    <i class="fas fa-phone mr-2"></i>Call Emergency
+                                </a>
+                                <form action="{{ url_for('update_incident_status', incident_id=alert.id) }}" method="POST" class="inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                    <input type="hidden" name="status" value="Resolved">
+                                    <button type="submit" class="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition">
+                                        <i class="fas fa-check mr-2"></i>Mark Resolved
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-shield-alt text-slate-300 text-6xl mb-4"></i>
+                    <h3 class="text-xl font-semibold text-slate-600 mb-2">No Active Alerts</h3>
+                    <p class="text-slate-500">All clear - No critical incidents at this time</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Resolved Archives Content -->
+        <div id="resolved-content" class="tab-content" style="padding: 1.5rem;">
+            <div class="mb-4">
+                <h2 class="section-title flex items-center">
+                    <i class="fas fa-archive mr-2"></i>
+                    Resolved Archives
+                </h2>
+                <p class="alert-meta mt-1">Historical record of resolved incidents (location data protected)</p>
+            </div>
+            
+            {% if resolved_incidents %}
+                <div class="space-y-4">
+                    {% for incident in resolved_incidents %}
+                    <div class="alert-card resolved-card">
+                        <div class="flex flex-col gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <span class="status-badge status-resolved">
+                                        <i class="fas fa-check-double mr-1"></i>RESOLVED
+                                    </span>
+                                    <h3 class="alert-title">{{ incident.incident_type }}</h3>
+                                </div>
+                                
+                                <p class="alert-description mb-4">{{ incident.description }}</p>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 alert-meta">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-user mr-2" style="color: #111111;"></i>
+                                        <span><strong>User:</strong> {{ incident.username }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-clock mr-2" style="color: #111111;"></i>
+                                        <span><strong>Reported:</strong> {{ incident.created_at }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-info-circle mr-2" style="color: #111111;"></i>
+                                        <span><strong>Status:</strong> {{ incident.status }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-shield-alt mr-2" style="color: #737373;"></i>
+                                        <span style="font-size: 0.75rem; font-style: italic;">Location data protected for privacy</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-archive empty-state-icon mb-4"></i>
+                    <h3 class="empty-state-title mb-2">No Resolved Incidents</h3>
+                    <p class="empty-state-text">No archived incidents to display</p>
                 </div>
             {% endif %}
         </div>
     </div>
 </div>
 
+<!-- Tab Switching Script -->
+<script>
+function switchTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Remove active class from all tab buttons
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Show selected tab content
+    document.getElementById(tabName + '-content').classList.add('active');
+    
+    // Add active class to selected tab button
+    document.getElementById(tabName + 'Tab').classList.add('active');
+}
+
+// Dispatch Unit Function with Live UI Update
+function dispatchUnit(incidentId) {
+    const selectElement = document.getElementById('dispatchUnit' + incidentId);
+    const unitType = selectElement.value;
+    
+    if (!unitType) {
+        alert('Please select a unit type before dispatching.');
+        return;
+    }
+    
+    // Map unit types to display names
+    const unitNames = {
+        'police': 'Police Patrol',
+        'ambulance': 'Ambulance',
+        'fire': 'Fire Brigade',
+        'swat': 'SWAT Team'
+    };
+    
+    const unitDisplayName = unitNames[unitType] || unitType;
+    
+    // Send POST request to dispatch endpoint
+    fetch('/api/dispatch', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            alert_id: incidentId,
+            unit_type: unitType
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update status badge immediately without page reload
+            updateStatusBadge(incidentId, data.status);
+            
+            // Reset dropdown
+            selectElement.value = '';
+            
+            // Show success notification
+            showAdminNotification('UNIT DISPATCHED', `${unitDisplayName} has been dispatched to incident #${incidentId}`);
+        } else {
+            alert('Dispatch Failed');
+        }
+    })
+    .catch(error => {
+        console.error('Error dispatching unit:', error);
+        alert('Dispatch Failed');
+    });
+}
+
+// Update status badge in the UI
+function updateStatusBadge(incidentId, newStatus) {
+    // Find the incident card
+    const incidentCard = document.querySelector(`[data-alert-id="${incidentId}"]`);
+    if (!incidentCard) return;
+    
+    // Find all status badges in this card
+    const statusBadges = incidentCard.querySelectorAll('.status-badge');
+    
+    // Update the first status badge (the ACTIVE badge)
+    if (statusBadges.length > 0) {
+        const badge = statusBadges[0];
+        badge.className = 'status-badge';
+        badge.style.background = '#111111';
+        badge.style.borderColor = '#111111';
+        badge.style.color = '#FFFFFF';
+        badge.innerHTML = `<i class="fas fa-truck mr-1"></i>${newStatus.toUpperCase()}`;
+    }
+}
+</script>
+
 <!-- Real-time Polling Script -->
 <script>
 let lastAlertId = 0;
+let knownIncidents = new Map(); // Track incident IDs and their statuses
 
-// Initialize with current max ID
-{% if high_alerts %}
-lastAlertId = {{ high_alerts[0].id }};
-{% endif %}
+// Initialize with current incidents
+document.addEventListener('DOMContentLoaded', function() {
+    // Store all current incidents and their statuses
+    document.querySelectorAll('[data-alert-id]').forEach(card => {
+        const alertId = card.getAttribute('data-alert-id');
+        const statusBadge = card.querySelector('.status-badge');
+        if (statusBadge) {
+            knownIncidents.set(alertId, statusBadge.textContent.trim());
+        }
+        // Track the highest ID
+        if (parseInt(alertId) > lastAlertId) {
+            lastAlertId = parseInt(alertId);
+        }
+    });
+});
 
-// Poll for new alerts every 5 seconds
+// Poll for new alerts and status changes every 5 seconds
 setInterval(pollForNewAlerts, 5000);
 
 function pollForNewAlerts() {
-    fetch(`/api/admin/poll/alerts?last_id=${lastAlertId}`)
+    fetch(`/api/admin/poll/alerts?last_id=0`) // Get all active alerts to check for changes
         .then(response => response.json())
         .then(data => {
-            if (data.count > 0) {
-                // Update last alert ID
-                lastAlertId = Math.max(...data.alerts.map(a => a.id), lastAlertId);
+            let hasNewAlerts = false;
+            let hasStatusChanges = false;
+            
+            // Check for status changes in existing incidents
+            data.alerts.forEach(alert => {
+                const alertIdStr = alert.id.toString();
+                const currentStatus = alert.status;
                 
-                // Show notification
-                showAdminNotification('🚨 NEW SOS ALERT!', `${data.count} new critical alert(s) received!`);
+                // Check if this is a new incident
+                if (alert.id > lastAlertId) {
+                    hasNewAlerts = true;
+                    lastAlertId = alert.id;
+                }
                 
-                // Play alert sound (optional)
+                // Check if status changed for existing incident
+                if (knownIncidents.has(alertIdStr)) {
+                    const oldStatus = knownIncidents.get(alertIdStr);
+                    if (currentStatus !== oldStatus && currentStatus.startsWith('Dispatched:')) {
+                        // Status changed to dispatched
+                        updateStatusBadge(alert.id, currentStatus);
+                        knownIncidents.set(alertIdStr, currentStatus);
+                        hasStatusChanges = true;
+                    }
+                } else {
+                    // New incident, add to tracking
+                    knownIncidents.set(alertIdStr, currentStatus);
+                }
+            });
+            
+            if (hasNewAlerts) {
+                // Show notification for new alerts
+                const newCount = data.alerts.filter(a => a.id > (lastAlertId - data.count)).length;
+                showAdminNotification('NEW SOS ALERT!', `${newCount} new critical alert(s) received!`);
+                
+                // Play alert sound
                 playAlertSound();
                 
                 // Update active alerts count
                 const activeCount = document.getElementById('activeAlertsCount');
-                activeCount.textContent = parseInt(activeCount.textContent) + data.count;
+                if (activeCount) {
+                    activeCount.textContent = data.count;
+                }
                 
                 // Reload page to show new alerts
                 setTimeout(() => location.reload(), 2000);
+            } else if (hasStatusChanges) {
+                // Don't reload, just update the UI
+                console.log('Status changes detected and updated');
             }
             
             // Update timestamp
@@ -235,17 +1159,19 @@ function updateAdminTimestamp() {
 
 function showAdminNotification(title, message) {
     const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 z-50 max-w-md w-full bg-red-900 border-2 border-red-500 rounded-lg shadow-2xl p-6 animate-pulse';
+    notification.className = 'fixed top-4 right-4 z-50 max-w-md w-full bg-white p-6';
+    notification.style.border = '4px solid #DC2626';
+    notification.style.fontFamily = 'Outfit, sans-serif';
     notification.innerHTML = `
         <div class="flex items-start">
             <div class="flex-shrink-0">
-                <i class="fas fa-exclamation-triangle text-red-400 text-3xl"></i>
+                <i class="fas fa-circle-exclamation text-3xl" style="color: #DC2626;"></i>
             </div>
             <div class="ml-4 flex-1">
-                <h3 class="text-lg font-bold text-white">${title}</h3>
-                <p class="mt-2 text-sm text-red-200">${message}</p>
+                <h3 class="text-lg font-bold" style="color: #111111; font-family: 'Outfit', sans-serif; text-transform: uppercase; letter-spacing: 0.05em;">${title}</h3>
+                <p class="mt-2 text-sm" style="color: #737373; font-family: 'Inter', sans-serif;">${message}</p>
             </div>
-            <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-red-300 hover:text-white">
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-2" style="color: #111111; opacity: 0.7;">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -254,6 +1180,7 @@ function showAdminNotification(title, message) {
     
     setTimeout(() => {
         notification.style.opacity = '0';
+        notification.style.transition = 'opacity 0.5s ease';
         setTimeout(() => notification.remove(), 500);
     }, 8000);
 }

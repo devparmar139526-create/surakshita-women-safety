@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dispatch Feature Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border: 1px solid;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        .status-dispatched {
+            background: #111111;
+            border-color: #111111;
+            color: #FFFFFF;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dispatch Feature - JavaScript Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Status Badge Update</h2>
+        <p>Current Status: <span id="testBadge" class="status-badge">ACTIVE</span></p>
+        <button onclick="testUpdateBadge()">Simulate Dispatch</button>
+        <p id="result1"></p>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Dispatch Function</h2>
+        <select id="testUnit">
+            <option value="">Select Unit</option>
+            <option value="police">Police Patrol</option>
+            <option value="ambulance">Ambulance</option>
+            <option value="fire">Fire Brigade</option>
+            <option value="swat">SWAT Team</option>
+        </select>
+        <button onclick="testDispatch()">Test Dispatch</button>
+        <p id="result2"></p>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Status Tracking</h2>
+        <p>Known Incidents: <span id="knownCount">0</span></p>
+        <button onclick="testTracking()">Add Test Incident</button>
+        <button onclick="testStatusChange()">Simulate Status Change</button>
+        <p id="result3"></p>
+    </div>
+
+    <script>
+        // Test badge update function
+        function testUpdateBadge() {
+            const badge = document.getElementById('testBadge');
+            badge.className = 'status-badge status-dispatched';
+            badge.style.background = '#111111';
+            badge.style.borderColor = '#111111';
+            badge.style.color = '#FFFFFF';
+            badge.innerHTML = 'DISPATCHED: POLICE PATROL';
+            document.getElementById('result1').textContent = '✅ Badge updated successfully!';
+            document.getElementById('result1').style.color = 'green';
+        }
+
+        // Test dispatch logic
+        function testDispatch() {
+            const select = document.getElementById('testUnit');
+            const unitType = select.value;
+            
+            if (!unitType) {
+                document.getElementById('result2').textContent = '⚠️ Please select a unit type';
+                document.getElementById('result2').style.color = 'orange';
+                return;
+            }
+            
+            const unitNames = {
+                'police': 'Police Patrol',
+                'ambulance': 'Ambulance',
+                'fire': 'Fire Brigade',
+                'swat': 'SWAT Team'
+            };
+            
+            const unitDisplayName = unitNames[unitType];
+            document.getElementById('result2').textContent = `✅ Would dispatch: ${unitDisplayName}`;
+            document.getElementById('result2').style.color = 'green';
+            select.value = '';
+        }
+
+        // Test status tracking
+        let testIncidents = new Map();
+        
+        function testTracking() {
+            const newId = (testIncidents.size + 1).toString();
+            testIncidents.set(newId, 'ACTIVE');
+            document.getElementById('knownCount').textContent = testIncidents.size;
+            document.getElementById('result3').textContent = `✅ Added incident #${newId}`;
+            document.getElementById('result3').style.color = 'green';
+        }
+
+        function testStatusChange() {
+            if (testIncidents.size === 0) {
+                document.getElementById('result3').textContent = '⚠️ Add an incident first';
+                document.getElementById('result3').style.color = 'orange';
+                return;
+            }
+            
+            const firstId = Array.from(testIncidents.keys())[0];
+            const oldStatus = testIncidents.get(firstId);
+            const newStatus = 'Dispatched: Police Patrol';
+            
+            testIncidents.set(firstId, newStatus);
+            
+            document.getElementById('result3').textContent = 
+                `✅ Incident #${firstId} status changed: ${oldStatus} → ${newStatus}`;
+            document.getElementById('result3').style.color = 'green';
+        }
+    </script>
+</body>
+</html>
