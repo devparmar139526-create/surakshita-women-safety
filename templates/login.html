@@ -4,7 +4,11 @@
 
 {% block content %}
 <style>
-    /* Swiss International Login - Pure White & Black Theme */
+    /* ========================================
+       SWISS INTERNATIONAL LOGIN PAGE
+       Pure White (#FFFFFF), Black Typography
+       ======================================== */
+    
     .login-container {
         min-height: 100vh;
         display: flex;
@@ -14,40 +18,46 @@
         padding: 2rem;
     }
     
-    .login-box {
+    /* Card: White with 1px solid Black border (#000000), NO Shadows */
+    .login-card {
         background: #FFFFFF;
         border: 1px solid #000000;
         padding: 3rem;
         width: 100%;
-        max-width: 420px;
+        max-width: 440px;
     }
     
+    /* Header Section */
     .login-header {
         margin-bottom: 2.5rem;
+        text-align: left;
     }
     
+    /* Dynamic Title - Outfit Font, Conditional Color */
     .login-title {
         font-family: 'Outfit', sans-serif;
-        font-size: 2rem;
+        font-size: 2.25rem;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.02em;
         margin: 0;
+        line-height: 1.1;
     }
     
-    .login-title.admin-portal {
-        color: #DC2626;
+    .login-subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+        font-weight: 400;
+        color: #737373;
+        margin-top: 0.5rem;
     }
     
-    .login-title.user-portal {
-        color: #000000;
-    }
-    
-    /* Form Fields */
+    /* Form Groups */
     .form-group {
         margin-bottom: 1.5rem;
     }
     
+    /* Labels - Outfit Font, Uppercase */
     .form-label {
         display: block;
         font-family: 'Outfit', sans-serif;
@@ -59,90 +69,55 @@
         margin-bottom: 0.5rem;
     }
     
-    /* Flexbox Icon Input - Proper Alignment */
-    .flex {
+    /* Input Container - Flexbox for Icon Alignment */
+    .input-wrapper {
         display: flex;
-    }
-    
-    .items-center {
         align-items: center;
-    }
-    
-    .justify-center {
-        justify-content: center;
-    }
-    
-    .border {
-        border-width: 1px;
-        border-style: solid;
-    }
-    
-    .border-gray-300 {
-        border-color: #D1D5DB;
-    }
-    
-    .focus-within\:border-black:focus-within {
-        border-color: #000000;
-    }
-    
-    .p-3 {
-        padding: 0.75rem;
-    }
-    
-    .mt-1 {
-        margin-top: 0.25rem;
-    }
-    
-    .ml-2 {
-        margin-left: 0.5rem;
-    }
-    
-    .min-w-\\[24px\\] {
-        min-width: 24px;
-    }
-    
-    .transition-colors {
+        border: 1px solid #E5E5E5;
+        background: #FFFFFF;
+        padding: 0.75rem 1rem;
         transition: border-color 0.2s ease;
     }
     
-    .text-gray-400 {
+    .input-wrapper:focus-within {
+        border-color: #000000;
+    }
+    
+    /* Icon Container - Fixed Width for Perfect Alignment */
+    .input-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
         color: #9CA3AF;
-    }
-    
-    .w-full {
-        width: 100%;
-    }
-    
-    .outline-none {
-        outline: none;
-    }
-    
-    .border-none {
-        border: none;
-    }
-    
-    .p-0 {
-        padding: 0;
-    }
-    
-    .text-sm {
         font-size: 0.875rem;
     }
     
-    .font-inter {
-        font-family: 'Inter', sans-serif;
-    }
-    
-    .flex input {
-        color: #000000;
+    /* Input Field */
+    .input-field {
+        flex: 1;
+        border: none;
+        outline: none;
         background: transparent;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9375rem;
+        font-weight: 400;
+        color: #000000;
+        margin-left: 0.75rem;
+        padding: 0;
     }
     
-    .flex input::placeholder {
+    .input-field::placeholder {
         color: #9CA3AF;
+        opacity: 0.7;
     }
     
-    /* Footer Link */
+    /* Submit Button - Uses .btn-swiss */
+    .login-submit {
+        margin-top: 2rem;
+    }
+    
+    /* Footer Section */
     .login-footer {
         margin-top: 2rem;
         padding-top: 2rem;
@@ -150,10 +125,10 @@
         text-align: center;
     }
     
-    .login-footer p {
+    .login-footer-text {
         font-family: 'Inter', sans-serif;
-        color: #737373;
         font-size: 0.875rem;
+        color: #737373;
         margin: 0;
     }
     
@@ -162,82 +137,139 @@
         font-weight: 600;
         text-decoration: none;
         border-bottom: 1px solid #000000;
+        transition: opacity 0.2s ease;
     }
     
     .login-link:hover {
-        opacity: 0.7;
+        opacity: 0.6;
     }
     
-    /* Responsive */
+    /* Flash Messages */
+    .flash-messages {
+        margin-bottom: 1.5rem;
+    }
+    
+    .alert {
+        padding: 0.75rem 1rem;
+        border: 1px solid;
+        margin-bottom: 1rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.875rem;
+    }
+    
+    .alert-error {
+        background: #FEF2F2;
+        border-color: #DC2626;
+        color: #991B1B;
+    }
+    
+    .alert-success {
+        background: #F0FDF4;
+        border-color: #16A34A;
+        color: #166534;
+    }
+    
+    .alert-info {
+        background: #F0F9FF;
+        border-color: #0284C7;
+        color: #075985;
+    }
+    
+    /* Responsive Design */
     @media (max-width: 480px) {
-        .login-box {
-            padding: 2rem;
+        .login-card {
+            padding: 2rem 1.5rem;
         }
         
         .login-title {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
         }
     }
 </style>
 
 <div class="login-container">
-    <div class="login-box">
+    <div class="login-card">
+        <!-- Header with Dynamic Title -->
         <div class="login-header">
             {% if is_admin_portal %}
-                <h1 class="login-title admin-portal">ADMIN PORTAL</h1>
+                <h1 class="login-title" style="color: #DC2626;">ADMIN PORTAL</h1>
+                <p class="login-subtitle">Emergency Response Dashboard Access</p>
             {% else %}
-                <h1 class="login-title user-portal">SURAKSHITA ACCESS</h1>
+                <h1 class="login-title" style="color: #000000;">SURAKSHITA ACCESS</h1>
+                <p class="login-subtitle">Women's Safety Monitoring System</p>
             {% endif %}
         </div>
         
-        <form action="{{ url_for('login') }}" method="POST">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Login Form -->
+        <form action="{% if is_admin_portal %}{{ url_for('admin_portal_login') }}{% else %}{{ url_for('login') }}{% endif %}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             
+            <!-- Username Field -->
             <div class="form-group">
                 <label for="username" class="form-label">Username</label>
-                <div class="flex items-center border border-gray-300 focus-within:border-black p-3 mt-1 transition-colors">
-                    <div class="min-w-[24px] flex justify-center text-gray-400">
+                <div class="input-wrapper">
+                    <div class="input-icon">
                         <i class="fas fa-user"></i>
                     </div>
                     <input 
-                        class="w-full outline-none border-none p-0 ml-2 text-sm font-inter"
+                        class="input-field"
                         id="username" 
                         name="username" 
                         type="text" 
                         required 
-                        placeholder="Enter username"
+                        placeholder="Enter your username"
+                        autocomplete="username"
                     />
                 </div>
             </div>
             
+            <!-- Password Field -->
             <div class="form-group">
                 <label for="password" class="form-label">Password</label>
-                <div class="flex items-center border border-gray-300 focus-within:border-black p-3 mt-1 transition-colors">
-                    <div class="min-w-[24px] flex justify-center text-gray-400">
+                <div class="input-wrapper">
+                    <div class="input-icon">
                         <i class="fas fa-lock"></i>
                     </div>
                     <input 
-                        class="w-full outline-none border-none p-0 ml-2 text-sm font-inter"
+                        class="input-field"
                         id="password" 
                         name="password" 
                         type="password" 
                         required 
-                        placeholder="Enter password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
                     />
                 </div>
             </div>
             
-            <button type="submit" class="btn-swiss btn-full" style="margin-top: 2rem;">
+            <!-- Submit Button -->
+            <button type="submit" class="btn-swiss btn-full login-submit">
                 SIGN IN
             </button>
         </form>
         
+        <!-- Footer with Registration Link -->
+        {% if not is_admin_portal %}
         <div class="login-footer">
-            <p>
-                No account? 
-                <a href="{{ url_for('register') }}" class="login-link">Register</a>
+            <p class="login-footer-text">
+                Don't have an account? 
+                <a href="{{ url_for('register') }}" class="login-link">Create Account</a>
             </p>
         </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

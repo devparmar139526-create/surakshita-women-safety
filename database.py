@@ -46,6 +46,16 @@ def init_db():
     except sqlite3.OperationalError:
         pass  # Column already exists
     
+    try:
+        cursor.execute('ALTER TABLE incidents ADD COLUMN required_help TEXT')
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+    
+    try:
+        cursor.execute('ALTER TABLE incidents ADD COLUMN dispatched_unit TEXT')
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+    
     conn.commit()
     conn.close()
     print("Database initialized successfully!")

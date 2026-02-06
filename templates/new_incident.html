@@ -6,21 +6,22 @@
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Report New Incident</h1>
-        <p class="mt-2 text-gray-600">Help us track and address safety concerns in your area</p>
+        <h1 class="text-3xl font-bold" style=\"color: #000000; font-family: 'Outfit', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em;\">Report New Incident</h1>
+        <p class="mt-2" style=\"color: #737373; font-family: 'Inter', sans-serif;\">Help us track and address safety concerns in your area</p>
     </div>
 
     <!-- Form -->
-    <div class="bg-white rounded-lg shadow-md p-8">
+    <div class="bg-white p-8" style="border: 1px solid #E5E5E5;">
         <form action="{{ url_for('new_incident') }}" method="POST" class="space-y-8">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <!-- Incident Type -->
             <div>
-                <label for="incident_type" class="block text-sm font-medium text-gray-700 mb-2">
-                    Incident Type <span class="text-red-500">*</span>
+                <label for="incident_type" class="block text-sm font-medium mb-2" style="color: #000000; font-family: 'Outfit', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">
+                    Incident Type <span style="color: #DC2626;">*</span>
                 </label>
                 <select id="incident_type" name="incident_type" required
-                        class="mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 sm:text-sm transition">
+                        class="mt-1 block w-full px-4 py-3 border focus:outline-none focus:border-black sm:text-sm transition"
+                        style="border: 1px solid #E5E5E5; border-radius: 0; background: #FFFFFF; color: #000000; font-family: 'Inter', sans-serif;">
                     <option value="">Select incident type</option>
                     <option value="Harassment">Harassment</option>
                     <option value="Stalking">Stalking</option>
@@ -32,57 +33,77 @@
                 </select>
             </div>
 
+            <!-- Required Help -->
+            <div>
+                <label for="required_help" class="block text-sm font-medium mb-2" style="color: #000000; font-family: 'Outfit', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">
+                    REQUEST IMMEDIATE ASSISTANCE <span style="color: #DC2626;">*</span>
+                </label>
+                <select id="required_help" name="required_help" required
+                        class="mt-1 block w-full px-4 py-3 border focus:outline-none focus:border-black sm:text-sm transition"
+                        style="border: 1px solid #000000; border-radius: 0; background: #FFFFFF; color: #000000; font-weight: 700; font-family: 'Inter', sans-serif;">
+                    <option value="">Select required help</option>
+                    <option value="Immediate Police">Immediate Police</option>
+                    <option value="Medical/Ambulance">Medical/Ambulance</option>
+                    <option value="Fire Fighters">Fire Fighters</option>
+                    <option value="Petrol/Mechanic">Petrol/Mechanic</option>
+                </select>
+                <p class="mt-2 text-sm" style="color: #737373; font-family: 'Inter', sans-serif;">Select the type of emergency response needed.</p>
+            </div>
+
             <!-- Description -->
             <div>
-                <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-                    Description <span class="text-red-500">*</span>
+                <label for="description" class="block text-sm font-medium mb-2" style="color: #000000; font-family: 'Outfit', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">
+                    Description <span style="color: #DC2626;">*</span>
                 </label>
                 <textarea id="description" name="description" rows="5" required
-                          class="mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 sm:text-sm transition"
+                          class="mt-1 block w-full px-4 py-3 border focus:outline-none focus:border-black sm:text-sm transition"
+                          style="border: 1px solid #E5E5E5; border-radius: 0; background: #FFFFFF; color: #000000; font-family: 'Inter', sans-serif;"
                           placeholder="Please provide detailed information about the incident..."></textarea>
-                <p class="mt-2 text-sm text-gray-500">Provide as much detail as possible to help track and address the issue.</p>
+                <p class="mt-2 text-sm" style="color: #737373; font-family: 'Inter', sans-serif;">Provide as much detail as possible to help track and address the issue.</p>
             </div>
 
             <!-- Location -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="latitude" class="block text-sm font-medium text-gray-700 mb-2">
-                        Latitude <span class="text-red-500">*</span>
+                    <label for="latitude" class="block text-sm font-medium mb-2" style="color: #000000; font-family: 'Outfit', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">
+                        Latitude <span style="color: #DC2626;">*</span>
                     </label>
                     <input type="number" id="latitude" name="latitude" step="any" required
-                           class="mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 sm:text-sm transition"
+                           class="mt-1 block w-full px-4 py-3 border focus:outline-none focus:border-black sm:text-sm transition"
+                           style="border: 1px solid #E5E5E5; border-radius: 0; background: #FFFFFF; color: #000000; font-family: 'Inter', sans-serif;"
                            placeholder="e.g., 28.6139">
-                    <p class="mt-1 text-xs text-gray-500">Enter the latitude coordinate</p>
+                    <p class="mt-1 text-xs" style="color: #737373; font-family: 'Inter', sans-serif;">Enter the latitude coordinate</p>
                 </div>
                 <div>
-                    <label for="longitude" class="block text-sm font-medium text-gray-700 mb-2">
-                        Longitude <span class="text-red-500">*</span>
+                    <label for="longitude" class="block text-sm font-medium mb-2" style="color: #000000; font-family: 'Outfit', sans-serif; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px;">
+                        Longitude <span style="color: #DC2626;">*</span>
                     </label>
                     <input type="number" id="longitude" name="longitude" step="any" required
-                           class="mt-1 block w-full px-4 py-3 border border-slate-200 rounded-md shadow-sm focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 sm:text-sm transition"
+                           class="mt-1 block w-full px-4 py-3 border focus:outline-none focus:border-black sm:text-sm transition"
+                           style="border: 1px solid #E5E5E5; border-radius: 0; background: #FFFFFF; color: #000000; font-family: 'Inter', sans-serif;"
                            placeholder="e.g., 77.2090">
-                    <p class="mt-1 text-xs text-gray-500">Enter the longitude coordinate</p>
+                    <p class="mt-1 text-xs" style="color: #737373; font-family: 'Inter', sans-serif;">Enter the longitude coordinate</p>
                 </div>
             </div>
 
             <!-- Get Current Location Button -->
             <div>
                 <button type="button" onclick="getLocation()" 
-                        class="inline-flex items-center px-4 py-2 border border-slate-300 rounded-md shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
-                    <i class="fas fa-location-arrow text-slate-500 mr-2"></i>
+                        class="btn-swiss inline-flex items-center">
+                    <i class="fas fa-location-arrow mr-2"></i>
                     Use Current Location
                 </button>
-                <p class="mt-2 text-sm text-gray-500">Click to automatically fill in your current coordinates</p>
+                <p class="mt-2 text-sm" style="color: #737373; font-family: 'Inter', sans-serif;">Click to automatically fill in your current coordinates</p>
             </div>
 
             <!-- Submit Button -->
-            <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+            <div class="flex items-center justify-end space-x-4 pt-6" style="border-top: 1px solid #E5E5E5;">
                 <a href="{{ url_for('incidents') }}" 
-                   class="px-6 py-2 border border-slate-300 rounded-md shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 transition">
+                   class="btn-swiss">
                     Cancel
                 </a>
                 <button type="submit" 
-                        class="inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+                        class="btn-swiss btn-solid inline-flex items-center">
                     <i class="fas fa-paper-plane mr-2"></i>
                     Submit Incident
                 </button>

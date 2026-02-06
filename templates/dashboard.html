@@ -286,7 +286,7 @@
         
         <div style="margin-bottom: 1.5rem;">
             <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #111111; margin-bottom: 0.5rem;">Incident Type</label>
-            <select id="sosIncidentType" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; font-size: 0.875rem; color: #111111;">
+            <select id="sosIncidentType" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; font-size: 0.875rem; color: #111111; border-radius: 0;">
                 <option value="SOS Emergency">Emergency</option>
                 <option value="SOS - Harassment">Harassment</option>
                 <option value="SOS - Assault">Assault</option>
@@ -297,8 +297,19 @@
         </div>
         
         <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #000000; margin-bottom: 0.5rem;">REQUEST IMMEDIATE ASSISTANCE</label>
+            <select id="sosRequiredHelp" style="width: 100%; padding: 0.75rem; border: 1px solid #000000; font-size: 0.875rem; font-weight: 700; color: #000000; border-radius: 0; background: #FFFFFF;">
+                <option value="">Select required help</option>
+                <option value="Immediate Police">Immediate Police</option>
+                <option value="Medical/Ambulance">Medical/Ambulance</option>
+                <option value="Fire Fighters">Fire Fighters</option>
+                <option value="Petrol/Mechanic">Petrol/Mechanic</option>
+            </select>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
             <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #111111; margin-bottom: 0.5rem;">Additional Details</label>
-            <textarea id="sosDescription" rows="3" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; font-size: 0.875rem; color: #111111;" placeholder="Brief description if possible..."></textarea>
+            <textarea id="sosDescription" rows="3" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; font-size: 0.875rem; color: #111111; border-radius: 0;" placeholder="Brief description if possible..."></textarea>
         </div>
         
         <div style="display: flex; gap: 1rem;">
@@ -734,7 +745,14 @@ function sendSOS() {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
             const incidentType = document.getElementById('sosIncidentType').value;
+            const requiredHelp = document.getElementById('sosRequiredHelp').value;
             const description = document.getElementById('sosDescription').value || 'Emergency SOS alert triggered';
+            
+            // Validate required help selection
+            if (!requiredHelp) {
+                statusDiv.innerHTML = '<span class="text-red-400">✗ Please select what help you need</span>';
+                return;
+            }
             
             statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i><span class="text-yellow-400">Sending alert...</span>';
             
@@ -749,6 +767,7 @@ function sendSOS() {
                     latitude: latitude,
                     longitude: longitude,
                     incident_type: incidentType,
+                    required_help: requiredHelp,
                     description: description
                 })
             })
